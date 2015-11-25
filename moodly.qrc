@@ -1,0 +1,24 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/Assets">
+    <file alias="setting.png">Assets/setting.png</file>
+    <file alias="course.png">Assets/course.png</file>
+    <file alias="close.png">Assets/close.png</file>
+    <file alias="notif.png">Assets/notif3.png</file>
+    <file alias="moodly.gif">Assets/moodly.gif</file>
+    <file alias="gtick.png">Assets/gtick.png</file>
+    <file alias="error.png">Assets/error.png</file>
+    <file alias="file.png">Assets/file.png</file>
+    <file alias="forum.png">Assets/forum5.png</file>
+    <file alias="hw.png">Assets/hw.png</file>
+    <file alias="link.png">Assets/link.png</file>
+    <file alias="close2.png">Assets/close2.png</file>
+    <file alias="sync.png">Assets/sync.png</file>
+</qresource>
+
+<qresource prefix="/fonts">
+    <file alias="Raleway.ttf">fonts/Raleway.ttf</file>
+</qresource>
+
+
+
+</RCC>
