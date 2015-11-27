@@ -18,6 +18,8 @@ import re
 from models import *
 import sys
 import subprocess
+import pygame
+
 
 
 class mainWindow(QMainWindow):
@@ -1498,6 +1500,10 @@ class SystemTrayIcon(QSystemTrayIcon):
 	def timed_notify(self,msg1,msg2,rsn):
 		self.showMessage(msg1, msg2,rsn)
 		#winsound.PlaySound("SystemAsterisk", winsound.MB_ICONASTERISK)
+		pygame.init()
+		pygame.mixer.music.load("notify.wav")
+		pygame.mixer.music.play()
+		pygame.event.wait()
 
 	def activateIcon(self,reason):
 
