@@ -14,9 +14,10 @@ from resource import*
 from functools import partial
 import os
 from logic import Notify
-import winsound
 import re
 from models import *
+import sys
+import subprocess
 
 
 class mainWindow(QMainWindow):
@@ -750,7 +751,7 @@ class tabWidget(QTabWidget):
 		else:
 			for tab in self.tab:
 				if tab.id_ == id_:
-					self.setCurrentIndex(self.indexOf(self.tab[id_]))
+					self.setCurrentIndex(self.indexOf(tab))
 					return
 			self.tab.append(itemTab(self,id_))
 			self.addTab(self.tab[self.marker],QIcon(':/Assets/course.png'),self.obj.courses[id_].c_name)
@@ -1318,7 +1319,11 @@ class itemTab(QWidget):
 
 	def openItem(self,id_):
 		fileName = self.obj.courses[self.id_].items[id_].olink
-		os.startfile(fileName)
+		if sys.platform == "win32":
+			os.startfile(fileName)
+		else:
+			opener ="open" if sys.platform == "darwin" else "xdg-open"
+			subprocess.call([opener, fileName])
 
 	def copyLink(self,id_):
 		cb = QApplication.clipboard()
@@ -1492,7 +1497,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
 	def timed_notify(self,msg1,msg2,rsn):
 		self.showMessage(msg1, msg2,rsn)
-		winsound.PlaySound("SystemAsterisk", winsound.MB_ICONASTERISK)
+		#winsound.PlaySound("SystemAsterisk", winsound.MB_ICONASTERISK)
 
 	def activateIcon(self,reason):
 

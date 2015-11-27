@@ -258,7 +258,7 @@ background-color:#fff;
 
     color: #FFF;
     max-height:30px;
-    max-width:50px;
+    max-width:60px;
     background-color: #33C3F0;
     border-color: #33C3F0;
     font-family:Raleway;
@@ -336,6 +336,7 @@ QTabBar::tab {
 
   border-top-right-radius:15px;
   min-width:7em;
+
   padding: 12px;
   font-family:Raleway;
 
@@ -345,10 +346,6 @@ QTabBar::tab:selected, QTabBar::tab:hover {
    background-color: rgb(255, 250, 175);
 
 }
-
-
-
-
 
  QScrollArea
  {

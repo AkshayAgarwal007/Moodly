@@ -32,7 +32,7 @@ def main():
 
 
 def config_check():                             #Check whether the sqlite file exists or not(returns True or False)
-    fname=os.getcwd()+ '\moodly.sqlite'
+    fname=os.path.join(os.getcwd(), "./moodly.sqlite")
     return(os.path.isfile(fname))
 
 
