@@ -50,7 +50,7 @@ background-color:#fff;
 
     font-size: 15px;
     font-family:Raleway;
-    color : red ;
+    color : #33C3F0 ;
 
 }
 
@@ -191,7 +191,7 @@ background-color:#fff;
     color: #FFF;
     max-height:30px;
     max-width:5px;
-    background-color: #6666ff;
+    background-color: #f7f7f7;
     border-color: #6666ff;
     font-family:Raleway;
     margin-right:10px;
@@ -200,7 +200,7 @@ background-color:#fff;
 #linkBtn:hover
 {
     color: #FFF;
-    background-color: #3232FF;
+    background-color: #dedede;
     border-color: #3232FF;
 
 }
@@ -224,7 +224,7 @@ background-color:#fff;
 
     color: #FFF;
     max-height:30px;
-    max-width:50px;
+    max-width:30px;
     background-color: #ED5F6F;
     border-color: #ED5F6F;
     font-family:Raleway;
@@ -258,7 +258,7 @@ background-color:#fff;
 
     color: #FFF;
     max-height:30px;
-    max-width:60px;
+    max-width:30px;
     background-color: #33C3F0;
     border-color: #33C3F0;
     font-family:Raleway;
@@ -273,11 +273,10 @@ background-color:#fff;
 
 }
 
-
 #backBtn{
 
     height: 38px;
-    padding: 0 20px;
+    padding: 0 30px;
     color: #555;
     text-align: center;
     font-size: 11px;
@@ -288,23 +287,26 @@ background-color:#fff;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
-
+    border-radius: 4px;
+    border: 1px solid #bbb;
 
     color: #FFF;
     max-height:30px;
-    max-width:1px;
-    background-color: rgb(255, 250, 175);
+    max-width:60px;
+    background-color: #33C3F0;
+    border-color: #33C3F0;
     font-family:Raleway;
-
+    margin-right:10px;
 }
 
 #backBtn:hover
 {
     color: #FFF;
-    background-color: rgb(255, 250, 175);
-
+    background-color: #1EAEDB;
+    border-color: #1EAEDB;
 
 }
+
 
 #cFrameEven
 {

@@ -1150,7 +1150,7 @@ class itemTab(QWidget):
 
 
 		self.backBtn = QPushButton(QIcon(':/Assets/close2.png'),'Close')
-		self.backBtn.setObjectName('sbtn')
+		self.backBtn.setObjectName('backBtn')
 		self.backBtn.clicked.connect(partial(self.parent_.closeItemTab,self.id_))
 		self.clbl = QLabel(self)
 		self.clbl.setText(self.obj.courses[self.id_].c_name.upper())
@@ -1501,9 +1501,8 @@ class SystemTrayIcon(QSystemTrayIcon):
 		self.showMessage(msg1, msg2,rsn)
 		#winsound.PlaySound("SystemAsterisk", winsound.MB_ICONASTERISK)
 		pygame.init()
-		pygame.mixer.music.load(":/sounds/notify.wav")
+		pygame.mixer.music.load("./sounds/notify.wav")
 		pygame.mixer.music.play()
-		pygame.event.wait()
 
 	def activateIcon(self,reason):
 
