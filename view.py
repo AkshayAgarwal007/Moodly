@@ -254,6 +254,9 @@ class mainWindow(QMainWindow):
 
 		else:
 			reply = QMessageBox.question(self,'Moodly',"An update is already in progress. ", QMessageBox.Ok)
+			pygame.init()
+			pygame.mixer.music.load("./sounds/message.wav")
+			pygame.mixer.music.play()
 
 			if reply == QMessageBox.Ok:
 				pass
@@ -613,6 +616,9 @@ class reConfigureWidget(QWidget):
 
 			if self.obj.updating == True:
 				reply = QMessageBox.question(self,'Moodly',"An update is in progress. Kindly wait. ", QMessageBox.Ok)
+				pygame.init()
+				pygame.mixer.music.load("./sounds/message.wav")
+				pygame.mixer.music.play()
 
 				if reply == QMessageBox.Ok:
 					pass
@@ -1332,6 +1338,9 @@ class itemTab(QWidget):
 		cb.clear(mode=cb.Clipboard)
 		cb.setText(self.obj.courses[self.id_].items[id_].glink, mode=cb.Clipboard)
 		reply = QMessageBox.question(self,'Moodly',"The link has been copied", QMessageBox.Ok)
+		pygame.init()
+		pygame.mixer.music.load("./sounds/message.wav")
+		pygame.mixer.music.play()
 
 		if reply == QMessageBox.Ok:
 			pass
