@@ -1,4 +1,4 @@
 # Moodly
 Student Intimation System for Moodle (NIIT University).
 
-(https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Moodly Configure")
+![Moodly Configure](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/config.png "Moodly Configure")
