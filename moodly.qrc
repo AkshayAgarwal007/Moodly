@@ -13,6 +13,11 @@
     <file alias="link.png">Assets/link.png</file>
     <file alias="close2.png">Assets/close2.png</file>
     <file alias="sync.png">Assets/sync.png</file>
+
+</qresource>
+
+<qresource prefix="/sounds">
+    <file alias="notify.wav">sounds/notify.wav</file>
 </qresource>
 
 <qresource prefix="/fonts">
