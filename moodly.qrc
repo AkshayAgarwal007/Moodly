@@ -16,10 +16,6 @@
 
 </qresource>
 
-<qresource prefix="/sounds">
-    <file alias="notify.wav">sounds/notify.wav</file>
-</qresource>
-
 <qresource prefix="/fonts">
     <file alias="Raleway.ttf">fonts/Raleway.ttf</file>
 </qresource>
