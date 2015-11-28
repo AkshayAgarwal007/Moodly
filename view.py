@@ -1501,7 +1501,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 		self.showMessage(msg1, msg2,rsn)
 		#winsound.PlaySound("SystemAsterisk", winsound.MB_ICONASTERISK)
 		pygame.init()
-		pygame.mixer.music.load("notify.wav")
+		pygame.mixer.music.load(":/sounds/notify.wav")
 		pygame.mixer.music.play()
 		pygame.event.wait()
 
