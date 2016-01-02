@@ -1,3 +1,4 @@
 build/**/*
 dist/**/*
 Moodly.egg-info/**/*
+Moodly/__pycache__/**/*
