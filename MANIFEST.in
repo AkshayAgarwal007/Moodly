@@ -1,0 +1,3 @@
+include Moodly/sounds/notify.wav
+include Moodly/sounds/message.wav
+

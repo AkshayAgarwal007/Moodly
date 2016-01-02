@@ -1,4 +1,4 @@
-from models import *
+from .models import *
 from requests import session
 from bs4 import BeautifulSoup
 import re
@@ -35,36 +35,28 @@ class Configure():
 
     def getConfig(self):
 
-            ptr = Models()
-        #try:
+        ptr = Models()
+        try:
             row =ptr.fetchConfig()
             self.configured = row[1]
 
-
             if self.configured == 2:
                 self.getUserData(ptr)
-
                 self.getData(ptr)
-
                 self.getNotify(ptr)
-
                 self.getCourses(ptr)
-
                 self.getForum(ptr)
-
-
 
                 if len(self.courses) is not 0:
                     self.getItems(ptr)
 
                 self.generateCheckers()
 
+        except:
+            self.configured=0
 
-        #except:
-        #    self.configured=0
-
-        #finally:
-        #    ptr.closeConn()
+        finally:
+            ptr.closeConn()
 
     def getUserData(self,ptr):
         row = ptr.fetchUserData()
@@ -73,15 +65,11 @@ class Configure():
         self.nIntval=row[3]
         self.upIntval=row[4]
 
-
     def writeConfig(self,ptr):
         ptr.insertConfig((0,self.configured))
 
     def writeUserData(self,ptr):
-
-
         ptr.insertUserData((0,self.uname,self.passwd,self.nIntval,self.upIntval))
-
 
     def alterConfig(self,ptr):
         ptr.updateConfig((self.configured,self.statux_text,0))
@@ -89,11 +77,8 @@ class Configure():
     def alterUserData(self,ptr):
         ptr.updateUserData((self.passwd,self.nIntval,self.upIntval,0))
 
-
     def saveConfig(self,configured):
         self.configured=configured
-
-
 
     def saveUserData(self,uname,passwd,nIntval,upIntval ):
         self.uname=uname
@@ -109,10 +94,8 @@ class Configure():
         ptr.insertCourses(t)
 
     def alterCourses(self,ptr):
-
         for course in self.courses:
             ptr.updateCourses((course.flink,course.c_id))
-
 
     def removeCourses(self,c_id,ptr):
         ptr.deleteCourses((c_id))
@@ -122,10 +105,8 @@ class Configure():
         for course in courses:
             self.courses.append(Course(course[1],course[2],course[3]))
 
-
     def writeNotify(self,ptr):
         t=()
-
         for j in range(0,len(self.notif)):
                 t=((self.notif[j].notif_text,self.notif[j].tag,self.notif[j].seen,self.notif[j].scheduled,self.notif[j].date),)+t
         ptr.insertNotify(t)
@@ -136,11 +117,8 @@ class Configure():
         self.h=0
         self.d_n=0
 
-
-
     def getNotify(self,ptr):
         notifications = ptr.fetchNotify(self.lastScr)
-
         for notif in notifications:
             self.notif.append(Notify(notif[0],notif[1],notif[2],notif[3],notif[4]))
 
@@ -155,11 +133,9 @@ class Configure():
         ptr.insertItems(t)
 
     def getItems(self,ptr):
-
         for course in self.courses:
             items = ptr.fetchItems(course.c_id)
             for item in items:
-
                 course.items.append(Items(item[1],item[2],item[3],item[4],item[5]))
 
     def writeForum(self,ptr):
@@ -174,7 +150,6 @@ class Configure():
             forum = ptr.fetchForum(course.c_id)
             for text in forum:
                 course.forum.append(text[0])
-
 
     def writeData(self,ptr):
         ptr.insertData((0,self.scheduled,1))
@@ -195,9 +170,7 @@ class Configure():
         self.n =data[2]
         self.lastScr = data[1]
 
-
     def generateCheckers(self):
-
         if len(self.courses) is not 0:
           for course in self.courses:
             self.c_names.append(course.c_name)
@@ -209,7 +182,6 @@ class Configure():
     def alterNotify(self,ptr):
         ptr.updateNotify()
         self.alterData(ptr,1)
-
 
     def changeNotify(self):
         for notif in self.notif:
@@ -224,13 +196,10 @@ class Configure():
         'password' : passwd
           }
 
-
-
         try:
            with session() as c:
               c.post('https://moodle.niituniversity.in/moodle/login/index.php/', data=payload,timeout=20)
               response=c.get('https://moodle.niituniversity.in/moodle/my/index.php?mynumber=100',timeout=20)
-
 
         except:
             self.config_status = "Connection can't be established with the server."
@@ -240,18 +209,15 @@ class Configure():
 
         soup=BeautifulSoup(response.text,"lxml")
 
-
         if "My home" not in soup.head.title.text:
              self.config_status="Either your username or password is incorrect"
              self.status_msg[0] = "Unable to Configure. Either your username or password is incorrect. "
              self.status_msg[1] = 3
              return False
 
-
         self.config_status="Your changes have been successfully changed successfully"
         self.status_msg[0] = "Your password has been successfully changed "
         self.status_msg[1] = 1
-        #self.notif.append(Notify('Your Password has ',0,0,self.scheduled,datetime.datetime.now()))
 
         return True
 
@@ -263,13 +229,12 @@ class Configure():
         'password' : self.passwd
           }
 
-        self.scheduled = datetime.datetime.now()   #time of scrap
+        self.scheduled = datetime.datetime.now()
 
         try:
            with session() as c:
               c.post('https://moodle.niituniversity.in/moodle/login/index.php/', data=payload,timeout=20)
               response=c.get('https://moodle.niituniversity.in/moodle/my/index.php?mynumber=100',timeout=20)
-
 
         except:
             self.config_status = "Connection can't be established with the server."
@@ -280,14 +245,12 @@ class Configure():
 
         soup=BeautifulSoup(response.text,"lxml")
 
-
         if "My home" not in soup.head.title.text:
              self.config_status="Either your username or password is incorrect"
              self.status_msg[0] = "Unable to Configure. Either your username or password is incorrect"
              self.status_msg[1] = 3
              self.saveConfig(0)
              return False
-
 
         self.saveConfig(2)
         t = self.scheduled
@@ -297,16 +260,9 @@ class Configure():
         self.status_msg[1] = 3
         self.d_n+=1
 
-
         return True
 
-
-
-
     def courseScrapper(self):
-
-
-
         list_ci=[]
         list_cl=[]
 
@@ -324,11 +280,8 @@ class Configure():
               response=c.get('https://moodle.niituniversity.in/moodle/my/index.php?mynumber=100',timeout=20)
 
         except  :
-
             self.error=1
             return False
-
-
 
         soup=BeautifulSoup(response.text,"lxml")
 
@@ -358,7 +311,6 @@ class Configure():
 class Course():
 
     def __init__(self,c_name,c_id,flink):
-
         self.c_name = c_name
         self.c_id = c_id
         self.flink = flink
@@ -371,7 +323,6 @@ class Course():
         self.dummy_items = []
 
     def forumScrapper(self,obj):
-        
      if self.failed == False:
         self.dummy_forum=[]
         payload = {
@@ -383,13 +334,9 @@ class Course():
         try:
            with session() as c:
               c.post('https://moodle.niituniversity.in/moodle/login/index.php/', data=payload,timeout=20)
-
               response = c.get(self.flink,timeout=20)
 
-
         except:
-
-
             obj.notif.append(Notify('Forum Update Failed for %s'%self.c_name,0,0,obj.scheduled,datetime.datetime.now()))
             obj.error=1
             obj.d_n+=1
@@ -414,7 +361,7 @@ class Course():
         self.forum.extend(self.dummy_forum)
 
     def itemScrapper(self,obj):
-
+        print ("Scrapping " + self.c_name)
         self.added = False
         self.failed = False
         self.dummy_items = []
@@ -425,16 +372,12 @@ class Course():
         'password' : obj.passwd
           }
 
-
         try:
            with session() as c:
               c.post('https://moodle.niituniversity.in/moodle/login/index.php/', data=payload,timeout=20)
               response = c.get('https://moodle.niituniversity.in/moodle/course/view.php?id=%s'%self.c_id,timeout=20)
 
-
         except :
-
-
             obj.notif.append(Notify('Update Failed for %s'%self.c_name,0,0,obj.scheduled,datetime.datetime.now()))
             obj.error=1
             obj.d_n=obj.d_n+1
@@ -449,19 +392,13 @@ class Course():
         assign = 0
         noscrap = []
 
-
-
         for k in soup.find_all("div",attrs={'class':'activityinstance'}):
             for r in k.find_all("a"):
               if r['href'] not in self.glink:
-
-
                 self.dummy_items.append(Items('',r['href'],'',0,datetime.datetime.now()))
                 self.glink.append(r['href'])
 
-
                 if "forum/view.php" in r['href'] and self.flink is '':
-
                     self.flink = r['href']
                     self.dummy_items[item].saved=2
 
@@ -483,7 +420,6 @@ class Course():
                 num=num+1
               pos=pos+1
 
-
         if item is not 0:
             obj.notif.append(Notify('%s Successfully updated'%self.c_name,1,0,obj.scheduled,datetime.datetime.now()))
             self.added = True
@@ -495,7 +431,6 @@ class Course():
 class Items(object):
 
     def __init__(self,i_name,glink,olink,saved,date):
-
         self.i_name=i_name
         self.glink=glink
         self.olink=olink
@@ -506,13 +441,9 @@ class Items(object):
         self.i_name=i_name
 
 
-
-
-
 class Notify():
 
     def __init__(self,n_text,tag,seen,scheduled,date):
-
         self.notif_text = n_text
         self.tag =  tag
         self.seen = seen

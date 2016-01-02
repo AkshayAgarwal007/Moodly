@@ -1,17 +1,13 @@
 
 qss='''
 
-#Window1
-{
+#Window1 {
 background-color: rgb(255, 250, 175);
 }
 
-#Window2
-{
+#Window2 {
 background-color:#fff;
 }
-
-
 
 #pbar:horizontal {
     border: 1px solid gray;
@@ -21,7 +17,6 @@ background-color:#fff;
     color:#000;
     text-align:center;
     font-family:Raleway;
-
 }
 
 #pbar::chunk:horizontal {
@@ -32,44 +27,33 @@ background-color:#fff;
 }
 
 #slbl {
-
     font-size: 15px;
     font-style:italic;
     color:red;
     font-family:Arial;
 }
-#nlbl {
 
+#nlbl {
     font-size: 15px;
     margin-left:100px;
     font-family:Raleway;
-
 }
 
 #hlbl {
-
     font-size: 15px;
     font-family:Raleway;
     color : #33C3F0 ;
-
 }
 
 #clbl {
-
     font-size: 15px;
-
     font-family:Raleway;
-
 }
-
 
 #lbl {
-
     font-size: 15px;
-
     font-family:Raleway;
 }
-
 
 #qle
 {
@@ -78,34 +62,18 @@ background-color:#fff;
     background-color: #fff;
     border: 1px solid #D1D1D1;
     border-radius: 4px;
-
-
-
-
 }
 
 #qle:focus {
     border: 1px solid #33C3F0;
-    outline: 0; }
-
-#combo
-{
-    height: 20px;
-    padding: 1px 1px;
-    background-color: #fff;
-    bord    er: 1px solid #D1D1D1;
-    border-radius: 4px;
-
-
-
+    outline: 0;
 }
 
-#combo:focus {
-    border: 1px solid #33C3F0;
-    outline: 0; }
+#combo{
+    height :20px;
+}
 
 #btn{
-
     height: 38px;
     padding: 0 30px;
     color: #555;
@@ -113,14 +81,12 @@ background-color:#fff;
     font-size: 11px;
     font-weight: 600;
     line-height: 38px;
-
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #bbb;
-
     color: #FFF;
     max-height:30px;
     max-width:70px;
@@ -129,16 +95,13 @@ background-color:#fff;
     font-family:Raleway;
 }
 
-#btn:hover
-{
+#btn:hover {
     color: #FFF;
     background-color: #1EAEDB;
     border-color: #1EAEDB;
-
 }
 
-#gbtn{
-
+#gbtn {
     height: 38px;
     padding: 0 30px;
     color: #555;
@@ -146,14 +109,12 @@ background-color:#fff;
     font-size: 11px;
     font-weight: 600;
     line-height: 38px;
-
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #bbb;
-
     color: #FFF;
     max-height:30px;
     max-width:50px;
@@ -163,16 +124,13 @@ background-color:#fff;
     margin-right:10px;
 }
 
-#gbtn:hover
-{
+#gbtn:hover {
     color: #FFF;
     background-color: #06b200;
     border-color: #06b200;
-
 }
 
-#linkBtn{
-
+#linkBtn {
     height: 38px;
     padding: 0 25px;
     color: #555;
@@ -180,33 +138,28 @@ background-color:#fff;
     font-size: 11px;
     font-weight: 600;
     line-height: 38px;
-
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #bbb;
-
     color: #FFF;
     max-height:30px;
     max-width:5px;
     background-color: #f7f7f7;
-    border-color: #6666ff;
+    border-color: #8f8f8f;
     font-family:Raleway;
     margin-right:10px;
 }
 
-#linkBtn:hover
-{
+#linkBtn:hover {
     color: #FFF;
     background-color: #dedede;
-    border-color: #3232FF;
-
+    border-color: #8f8f8f;
 }
 
-#obtn{
-
+#obtn {
     height: 38px;
     padding: 0 30px;
     color: #555;
@@ -214,33 +167,28 @@ background-color:#fff;
     font-size: 11px;
     font-weight: 600;
     line-height: 38px;
-
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #bbb;
-
     color: #FFF;
     max-height:30px;
     max-width:30px;
     background-color: #ED5F6F;
     border-color: #ED5F6F;
     font-family:Raleway;
-
     margin-right:10px;
 }
 
-#obtn:hover
-{
+#obtn:hover {
     color: #FFF;
     background-color: #e83146;
     border-color: #e83146;
-
 }
-#sbtn{
 
+#sbtn {
     height: 38px;
     padding: 0 30px;
     color: #555;
@@ -248,14 +196,12 @@ background-color:#fff;
     font-size: 11px;
     font-weight: 600;
     line-height: 38px;
-
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #bbb;
-
     color: #FFF;
     max-height:30px;
     max-width:30px;
@@ -265,16 +211,13 @@ background-color:#fff;
     margin-right:10px;
 }
 
-#sbtn:hover
-{
+#sbtn:hover {
     color: #FFF;
     background-color: #1EAEDB;
     border-color: #1EAEDB;
-
 }
 
-#backBtn{
-
+#backBtn {
     height: 38px;
     padding: 0 30px;
     color: #555;
@@ -282,14 +225,12 @@ background-color:#fff;
     font-size: 11px;
     font-weight: 600;
     line-height: 38px;
-
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid #bbb;
-
     color: #FFF;
     max-height:30px;
     max-width:60px;
@@ -299,25 +240,19 @@ background-color:#fff;
     margin-right:10px;
 }
 
-#backBtn:hover
-{
+#backBtn:hover {
     color: #FFF;
     background-color: #1EAEDB;
     border-color: #1EAEDB;
-
 }
 
-
-#cFrameEven
-{
+#cFrameEven {
 background-color: rgb(255, 250, 175);
 min-height:140px;
 min-width:806px;
 }
 
-
-#cFrameOdd
-{
+#cFrameOdd {
 background-color: rgb(255, 250, 175);
 /*background-color:#F3F1EC;*/
 min-height:140px;
@@ -332,41 +267,30 @@ QTabWidget::tab-bar {
     left: 0px;
 }
 
-
 QTabBar::tab {
   font-weight:450;
-
   border-top-right-radius:15px;
   min-width:7em;
-
   padding: 12px;
   font-family:Raleway;
-
 }
 
 QTabBar::tab:selected, QTabBar::tab:hover {
    background-color: rgb(255, 250, 175);
-
 }
 
- QScrollArea
- {
+QScrollArea {
   border:0px;
- }
+}
 
-
-
- #nFrameEven
-{
+#nFrameEven {
 background-color: rgb(255, 250, 175);
 min-height:110px;
 max-height:110px;
 min-width:805px;
 }
 
-
-#nFrameOdd
-{
+#nFrameOdd {
 /*background-color: rgb(255, 250, 175);*/
 background-color:#F5F5DC;
 min-height:110px;
@@ -374,8 +298,7 @@ max-height:110px;
 min-width:805px;
 }
 
-#nFrameDummy
-{
+#nFrameDummy {
 /*background-color: rgb(255, 250, 175);*/
 background-color:#F5F5DC;
 min-height:110px;
@@ -385,8 +308,6 @@ min-width:805px;
 
 QStatusBar::item {
     border: 0px;
-
 }
 
-
- '''
+'''

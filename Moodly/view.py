@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import (QMainWindow, QLineEdit, QComboBox, QCheckBox, QLabel,QWidget, QPushButton, QMessageBox,
 			     QDesktopWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QProgressBar, QFrame, QTabWidget,
 			     QScrollArea,QAction, qApp,QStatusBar,QFileDialog,QSystemTrayIcon, QMenu,QApplication)
@@ -10,12 +9,12 @@ import time
 import datetime
 from PyQt5 import QtGui
 from PyQt5.QtGui import QClipboard
-from resource import*
+from .resource import*
 from functools import partial
 import os
-from logic import Notify
+from .logic import Notify
 import re
-from models import *
+from .models import *
 import sys
 import subprocess
 import pygame
@@ -36,20 +35,17 @@ class mainWindow(QMainWindow):
 		self.setWindowTitle('Moodly 1.0 Aplha - Configure')
 		self.setWindowIcon(QIcon(':/Assets/moodly.gif'))
 		self.setFixedSize(820,500)
-
 		self.center()
+
 		self.sysTray=QWidget()
 		self.tray = SystemTrayIcon(QIcon(':/Assets/moodly.gif'),self.sysTray)
 		self.tray.show()
-
 		self.tray.trigger.connect(self.showApp)
 		self.tray.qtrigger.connect(self.closeApp)
 		self.tray.uptrigger.connect(self.updateNow)
 		self.setWidget()
+
 		self.show()
-
-
-
 
 
 	def setWidget(self):
@@ -76,17 +72,13 @@ class mainWindow(QMainWindow):
 			self.statusBar.addWidget(self.statusLbl2,QtCore.Qt.AlignRight)
 
 			self.updateTimer()
-
 			self.notifTimer()
-
-
 			self.i_thread = {}
 			self.nt=0
 
 
 	def showApp(self):
-
-		if self.isMinimized() == True:
+		if self.isMinimized():
 			self.showNormal()
 
 		self.show()
@@ -102,7 +94,6 @@ class mainWindow(QMainWindow):
 			self.statusLbl1.setText(msg)
 		else:
 			self.statusLbl2.setText(msg)
-
 
 		self.statusBar.show()
 
@@ -124,24 +115,10 @@ class mainWindow(QMainWindow):
 		self.current_timer.timeout.connect(self.updater)
 		self.current_timer.setSingleShot(True)
 		if self.set==0:
-
 			self.updater()
-
-
 		else:
-
 			self.current_timer.start(delay)
-			#self.current_timer.start(30000)
 
-
-
-	def statusTimer(self):
-		#self.timer1 = QTimer()
-		#self.timer1.timeout.connect(partial(self.quickStatus,0))
-		#self.timer1.setSingleShot(True)
-		#self.timer1.start(10*60*1000)
-		#self.timer1.start(30000)
-		pass
 
 	def notifTimer(self):
 		if self.obj.nIntval=="Turn Off":
@@ -161,12 +138,10 @@ class mainWindow(QMainWindow):
 			self.tray.display_notify("Moodly","You have %s unread notifications"%str_,1)
 		self.notifTimer()
 
+
 	def quickStatus(self,i):
-
 		if self.obj.updating==False:
-
 			if 	i==0:
-
 				self.showStatus('Next Update Scheduled at %s'%str(self.obj.scheduled))
 				self.timer2 = QTimer()
 				self.timer2.timeout.connect(partial(self.quickStatus,1))
@@ -189,6 +164,7 @@ class mainWindow(QMainWindow):
 				self.timer2.start(6000)
 				self.statusTimer()
 
+
 	def updater(self):
 		self.obj.updating = True
 		self.showStatus('Updating Moodly.....',0)
@@ -197,15 +173,7 @@ class mainWindow(QMainWindow):
 		self.thread.start()
 
 
-
 	def closeEvent(self, event):
-		#reply = QMessageBox.question(self, 'Quit Moodly',"Are you sure you want to quit?", QMessageBox.Yes |
-					     #QMessageBox.No, QMessageBox.No)
-
-		#if reply == QMessageBox.Yes:
-			#event.accept()
-		#else:
-			#event.ignore()
 		self.hide()
 		event.ignore()
 		self.tray.display_notify('Moodly','Moodly running in notification tray.',1)
@@ -219,25 +187,17 @@ class mainWindow(QMainWindow):
 	def setMenuBar(self):
 		exitAction = QAction(QIcon(':/Assets/close.png'), '&Exit', self)
 		exitAction.setShortcut('Ctrl+Q')
-
 		exitAction.triggered.connect(self.closeApp)
 
 		self.alreadyOpen = 0
 
-
 		configAction = QAction(QIcon(':/Assets/setting.png'), '&Configure', self)
-
 		configAction.triggered.connect(self.changeConfig)
 		configAction.setShortcut('Ctrl+Shift+C')
-
-
 
 		updateAction = QAction(QIcon(':/Assets/sync.png'), '&Update Now', self)
 		updateAction.triggered.connect(self.updateNow)
 		updateAction.setShortcut('Ctrl+U')
-
-
-
 
 		menubar = self.menuBar()
 		fileMenu = menubar.addMenu('&File')
@@ -246,21 +206,18 @@ class mainWindow(QMainWindow):
 		fileMenu.addAction(exitAction)
 
 	def updateNow(self):
-
 		if self.obj.updating==False:
 			self.current_timer.stop()
 			self.current_timer.deleteLater()
 			self.updater()
 
 		else:
-			reply = QMessageBox.question(self,'Moodly',"An update is already in progress. ", QMessageBox.Ok)
 			pygame.init()
-			pygame.mixer.music.load("./sounds/message.wav")
+			pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/message.wav'))
 			pygame.mixer.music.play()
-
+			reply = QMessageBox.question(self,'Moodly',"An update is already in progress. ", QMessageBox.Ok)
 			if reply == QMessageBox.Ok:
 				pass
-
 
 
 	def changeConfig(self):
@@ -272,7 +229,6 @@ class mainWindow(QMainWindow):
 			self.alreadyOpen=1
 		else:
 			self.tabWidget.setCurrentIndex(self.tabWidget.indexOf(self.tab))
-
 
 
 	def verify(self):
@@ -289,7 +245,6 @@ class mainWindow(QMainWindow):
 		self.tray.display_notify("Moodly",self.obj.status_msg[0],self.obj.status_msg[1])
 
 
-
 	def tabUpdater(self):
 		self.set=1
 		self.tabWidget.tab1.updater()
@@ -297,29 +252,24 @@ class mainWindow(QMainWindow):
 		for tab in self.tabWidget.tab:
 			tab.updater()
 		self.obj.updating = False
-		#if self.obj.seen is not -4:
-		#	self.tabWidget.onChange(self.obj.seen)
+		print (self.obj.updating)
 		self.c_timer = QTimer()
 		self.c_timer.timeout.connect(partial(self.hideStatus,0))
 		self.c_timer.setSingleShot(True)
 		self.showStatus('Update Completed',0)
 		self.c_timer.start(5000)
 		self.tray.display_notify("Moodly",self.obj.status_msg[0],self.obj.status_msg[1])
-		#self.tabWidget.onActive()
 		self.updateTimer()
 
 	def itemsWriter(self,fileName,id1,id2):
-
 		nt=self.getIndex()
 		self.i_thread[nt] = itemsWriterThread(fileName,id1,id2,nt,self.obj)
 		self.i_thread[nt].finished.connect(partial(self.del_i_thread,self.i_thread[nt].id3))
 		self.i_thread[nt].start()
 
 
-
 	def del_i_thread(self,id3):
 		self.i_thread[id3]=0
-
 
 
 	def getIndex(self):
@@ -332,19 +282,18 @@ class mainWindow(QMainWindow):
 			self.nt+=1
 			return self.nt
 
+
 	def configWriter(self,text1,text2,combo1,combo2):
 		self.sid3=self.showStatus('Configuring...',1)
 		self.c_thread = configWriterThread(self.obj,text1,text2,combo1,combo2)
 		self.c_thread.finished.connect(self.reConfigModify)
 		self.c_thread.start()
 
+
 	def reConfigModify(self):
 		if self.alreadyOpen==1:
-
 				self.tab.status_label.setText(self.obj.config_status)
 		self.tray.display_notify("Moodly",self.obj.status_msg[0],self.obj.status_msg[1])
-
-
 		self.re_timer = QTimer()
 		self.re_timer.timeout.connect(partial(self.hideStatus,1))
 		self.re_timer.setSingleShot(True)
@@ -379,19 +328,14 @@ class mainWindow(QMainWindow):
 			self.obj.intValChanged = -1
 
 
-
-
 class configureWidget(QWidget):
-
 	def __init__(self,parent_):
-
 		super(configureWidget,self).__init__(parent_)
 		self.parent_=parent_
 		self.obj=parent_.obj
 		self.initUI()
 
 	def initUI(self):
-
 		self.qle1 = QLineEdit(self)
 		self.qle1.setObjectName("qle")
 		self.qle1.setPlaceholderText("Enter Your Moodle Username")
@@ -399,12 +343,6 @@ class configureWidget(QWidget):
 		self.qle2.setEchoMode(QLineEdit.Password)
 		self.qle2.setObjectName("qle")
 		self.qle2.setPlaceholderText("Enter Your Moodle Password")
-
-		#self.cb1 = QCheckBox('', self)
-		#self.cb1.toggle()
-		#self.cb2 = QCheckBox('', self)
-		#self.cb1.setObjectName("cb1")
-		#self.cb2.setObjectName("cb2")
 
 		lbltxt = ['Username', 'Password', 'Keep Notifying', 'Update Interval' ]
 		lbl=[]
@@ -458,7 +396,6 @@ class configureWidget(QWidget):
 
 
 	def keyPressEvent(self,event):
-
 		if event.key() == QtCore.Qt.Key_Return:
 
 			self.callRetrieve()
@@ -466,43 +403,31 @@ class configureWidget(QWidget):
 
 
 	def callRetrieve(self):
-
-			self.obj.saveUserData(str(self.qle1.text()),
+		self.obj.saveUserData(str(self.qle1.text()),
 						  str(self.qle2.text()),str(self.combo2.currentText()),str(self.combo.currentText()))
 
-			self.parent_.verify()
+		self.parent_.verify()
 
 
 class reConfigureWidget(QWidget):
-
 	def __init__(self,parent_):
-
 		super(reConfigureWidget,self).__init__(parent_)
 		self.parent_=parent_
 		self.obj=parent_.obj
 		self.initUI()
 
 	def initUI(self):
-
-
 		self.qle1 = QLineEdit(self)
 		self.qle1.setObjectName("qle")
 		self.qle1.setText(self.obj.uname)
 		self.qle1.setReadOnly(True)
-		#self.qle1.setPlaceholderText(self.obj.uname)
+
 		self.qle2 = QLineEdit(self)
 		self.qle2.setEchoMode(QLineEdit.Password)
 		self.qle2.setObjectName("qle")
 		self.qle2.setText(self.obj.passwd)
-		#self.qle2.setPlaceholderText(len(self.obj.passwd)*'*')
-		self.updating=False
 
-		#self.cb1 = QCheckBox('', self)
-		#if self.obj.launch == True:
-		#	self.cb1.toggle()
-		#self.cb2 = QCheckBox('', self)
-		#self.cb1.setObjectName("cb1")
-		#self.cb2.setObjectName("cb2")
+		self.updating=False
 
 		lbltxt = ['Username', 'Password', 'Keep Notifying', 'Update Interval' ]
 		lbl=[]
@@ -510,7 +435,7 @@ class reConfigureWidget(QWidget):
 		self.status_label.setObjectName('slbl')
 
 		self.obj.config_status =''
-		#self.status_label.setText(self.obj.config_status)
+
 		self.status_label.setText('')
 		for i in range(0,len(lbltxt)):
 			lbl.append(QLabel(self))
@@ -555,29 +480,17 @@ class reConfigureWidget(QWidget):
 			grid.addWidget(lbl[i2],i2+1 , 0)
 
 		grid.addWidget(self.qle1,1,1)
-
 		grid.addWidget(self.qle2,2,1)
-
 		grid.addWidget(self.combo2,3,1)
-
 		grid.addWidget(self.combo,4,1)
-
 		grid.addWidget(btn1, 5,0)
-
 		grid.addWidget(btn2, 5,1)
-
-		#grid.addWidget(self.status_label,5,0)
-
 		grid.setHorizontalSpacing(70)
 		grid.setVerticalSpacing(40)
 		grid.setContentsMargins(160, 35, 150, 0)
 
-
-
 		hbox1 = QHBoxLayout()
-
 		hbox1.addLayout(grid)
-
 		self.hbox2 = QHBoxLayout()
 		self.hbox2.setContentsMargins(160,0,0,0)
 		self.hbox2.setSpacing(0)
@@ -586,7 +499,6 @@ class reConfigureWidget(QWidget):
 		vbox = QVBoxLayout()
 		vbox.setContentsMargins(0,30,0,0)
 		vbox.setSpacing(0)
-
 		vbox.addLayout(hbox1)
 		vbox.addLayout(self.hbox2)
 
@@ -596,7 +508,6 @@ class reConfigureWidget(QWidget):
 		self.widget.setStyleSheet('#CWidget{background-color: rgb(255, 250, 175);}')
 
 		self.scroll = QScrollArea(self)
-
 		self.scroll.setWidget(self.widget)
 		self.scroll.setWidgetResizable(True)
 		self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -605,34 +516,29 @@ class reConfigureWidget(QWidget):
 		vbox1 = QVBoxLayout()
 		vbox1.setContentsMargins(0,0,0,0)
 		vbox1.setSpacing(0)
-
 		vbox1.addWidget(self.scroll)
 		self.setLayout(vbox1)
 
-		#self.setLayout(grid)
-
 
 	def callValidate(self):
+		if self.obj.updating == True:
+			pygame.init()
+			pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/message.wav'))
+			pygame.mixer.music.play()
+			reply = QMessageBox.question(self,'Moodly',"An update is in progress. Kindly wait. ", QMessageBox.Ok)
 
-			if self.obj.updating == True:
-				reply = QMessageBox.question(self,'Moodly',"An update is in progress. Kindly wait. ", QMessageBox.Ok)
-				pygame.init()
-				pygame.mixer.music.load("./sounds/message.wav")
-				pygame.mixer.music.play()
-
-				if reply == QMessageBox.Ok:
-					pass
-			else:
-				self.parent_.updating = True
-				self.parent_.parent_.configWriter(str(self.qle1.text()),
+			if reply == QMessageBox.Ok:
+				pass
+		else:
+			self.parent_.updating = True
+			self.parent_.parent_.configWriter(str(self.qle1.text()),
 							  str(self.qle2.text()),str(self.combo2.currentText()),str(self.combo.currentText()))
 
 
 
 	def closeConfig(self):
-
-				self.parent_.removeTab(self.parent_.indexOf(self))
-				self.parent_.parent_.alreadyOpen = 0
+		self.parent_.removeTab(self.parent_.indexOf(self))
+		self.parent_.parent_.alreadyOpen = 0
 
 
 class setupWidget(QWidget):
@@ -643,13 +549,10 @@ class setupWidget(QWidget):
 		self.initUI()
 
 	def initUI(self):
-
 		self.pbar = QProgressBar(self)
 		self.pbar.setObjectName('pbar')
-
 		self.pbar.setTextVisible(True)
 		self.pbar.setFormat('Configuring...')
-
 
 		self.timer = QBasicTimer()
 		self.step = 0
@@ -676,18 +579,13 @@ class setupWidget(QWidget):
 		vbox.addStretch(8)
 
 		self.setLayout(vbox)
-
-
 		self.callTimer()
 
 	def timerEvent(self,e):
-
 		if self.step>=100:
 			self.step=0
 		self.step=self.step+1
 		self.pbar.setValue(self.step)
-
-
 
 	def callTimer(self):
 		 self.timer.start(100, self)
@@ -696,14 +594,12 @@ class setupWidget(QWidget):
 class tabWidget(QTabWidget):
 
 	def __init__(self,parent_):
-
 		super(tabWidget,self).__init__(parent_)
 		self.parent_=parent_
 		self.obj=parent_.obj
 		self.initUI()
 
 	def initUI(self):
-
 		self.tab = []
 		self.marker = 0
 		self.updating = False
@@ -717,9 +613,6 @@ class tabWidget(QTabWidget):
 		self.setTabToolTip(self.indexOf(self.tab2),'Notifications')
 
 		self.currentChanged.connect(self.onChange)
-		#self.tab2=notifyTab(self)
-		#self.addTab(self.tab2)
-
 		self.tab2.installEventFilter(self)
 
 	def eventFilter(self,object,event):
@@ -742,17 +635,20 @@ class tabWidget(QTabWidget):
 	def shortenTabName(self,cname):
 		list1 =[]
 		for i, ch in enumerate(cname):
-			if i==0:
 				list1.append(ch)
-			elif cname[i-1]==' ':
-				list1.append(ch)
+				if len(list1)==12:
+					if list1[i]== ' ':
+						list1.pop(i)
+					list1.append('..')
+					break
 		return ''.join(list1)
 
 
 	def callItemTab(self,id_):
 		if self.marker ==0:
 			self.tab.append(itemTab(self,id_))
-			self.addTab(self.tab[self.marker],QIcon(':/Assets/course.png'),self.obj.courses[id_].c_name)
+			cname = self.shortenTabName(self.obj.courses[id_].c_name)
+			self.addTab(self.tab[self.marker],QIcon(':/Assets/course.png'),cname)
 			self.setCurrentIndex(self.indexOf(self.tab[self.marker]))
 			self.setTabToolTip(self.indexOf(self.tab[self.marker]),self.obj.courses[id_].c_name)
 			self.marker+=1
@@ -762,7 +658,8 @@ class tabWidget(QTabWidget):
 					self.setCurrentIndex(self.indexOf(tab))
 					return
 			self.tab.append(itemTab(self,id_))
-			self.addTab(self.tab[self.marker],QIcon(':/Assets/course.png'),self.obj.courses[id_].c_name)
+			cname = self.shortenTabName(self.obj.courses[id_].c_name)
+			self.addTab(self.tab[self.marker],QIcon(':/Assets/course.png'),cname)
 			self.setTabToolTip(self.indexOf(self.tab[self.marker]),self.obj.courses[id_].c_name)
 			self.setCurrentIndex(self.indexOf(self.tab[self.marker]))
 			self.marker+=1
@@ -780,20 +677,14 @@ class tabWidget(QTabWidget):
 				break
 
 
-
-
 class courseTab(QWidget):
-
 	def __init__(self,parent_):
-
 		super(courseTab,self).__init__(parent_)
 		self.parent_=parent_
 		self.obj=parent_.obj
 		self.initUI()
 
 	def initUI(self):
-
-
 		self.btn = []
 		self.lbl = []
 		self.cFrames =[]
@@ -858,15 +749,13 @@ class courseTab(QWidget):
 		self.setLayout(vbox1)
 
 	def createItemTab(self,id_):
-
 		self.parent_.callItemTab(id_)
 
 	def updater(self):
 		if self.obj.dummy_courses is '':
 			return
 		else:
-
-			if  self.d_==True:         # resolve the issue
+			if  self.d_==True:
 				child = self.vbox.takeAt(len(self.cFrames))
 				if child.widget() is not None:
 					child.widget().deleteLater()
@@ -875,7 +764,6 @@ class courseTab(QWidget):
 				self.dframe.deleteLater()
 
 				self.d_=False
-
 
 			if self.marker==0:
 				self.cFrames[0].deleteLater()
@@ -901,14 +789,11 @@ class courseTab(QWidget):
 			for i2 in range(self.marker,len(self.obj.courses)):
 				self.cFrames.append(courseFrames(self.lbl[i2],self.btn[i2]))
 
-
-
 			for i3 in range (self.marker,len(self.cFrames)):
 				if i3%2==0:
 					self.cFrames[i3].setObjectName('cFrameEven')
 				else:
 					self.cFrames[i3].setObjectName('cFrameEven')
-
 
 				self.vbox.addWidget(self.cFrames[i3])
 
@@ -918,23 +803,18 @@ class courseTab(QWidget):
 				self.vbox.addWidget(self.dframe)
 				self.d_=True
 
-
-
-
 			self.marker=self.marker+len(self.obj.dummy_courses)
+
 
 class notifyTab(QWidget):
 
 	def __init__(self,parent_):
-
 		super(notifyTab,self).__init__(parent_)
 		self.parent_=parent_
 		self.obj=parent_.obj
 		self.initUI()
 
 	def initUI(self):
-
-
 		self.btn = []
 		self.notif_lbl = []
 		self.tag_lbl = []
@@ -942,18 +822,10 @@ class notifyTab(QWidget):
 		self.d_ = False
 
 		for i in range(0,len(self.obj.notif)):
-
-
-
 			pixmap=QPixmap(self.obj.tagDict[self.obj.notif[i].tag])
 			pixmap = pixmap.scaled(50, 50)
-
-
-
-
 			self.tag_lbl.append(QLabel(self))
 			self.tag_lbl[i].setPixmap(pixmap)
-
 
 		for i1 in range(0,len(self.obj.notif)):
 			self.notif_lbl.append(QLabel(self))
@@ -961,15 +833,11 @@ class notifyTab(QWidget):
 			self.notif_lbl[i1].setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
 			self.notif_lbl[i1].setText(self.obj.notif[i1].notif_text)
 			self.notif_lbl[i1].setObjectName("nlbl")
-
-
-
 			self.btn.append(QPushButton('Get Link'))
 			self.btn[i1].setObjectName("btn")
 
 		for i2 in range(0,len(self.obj.notif)):
 			self.nFrames.append(notifyFrames(self.notif_lbl[i2],self.tag_lbl[i2],self.btn[i2]))
-
 			tag = self.obj.notif[i2].tag
 			if tag ==2 or tag==3 or tag==4:
 				self.nFrames[i2].setObjectName('nFrameOdd')
@@ -977,14 +845,9 @@ class notifyTab(QWidget):
 				self.nFrames[i2].setObjectName('nFrameEven')
 
 		self.widget = QWidget(self)
-
 		self.vbox = QVBoxLayout()
 
 		for index, frame in enumerate(self.nFrames):
-		#	if index%2==0:
-		#		frame.setObjectName('nFrameEven')
-		#	else:
-		#		frame.setObjectName('nFrameOdd')
 			self.vbox.addWidget(frame)
 
 		if len(self.nFrames)<4:
@@ -997,10 +860,7 @@ class notifyTab(QWidget):
 		self.vbox.setSpacing(3)
 
 		self.widget.setLayout(self.vbox)
-
 		self.scroll = QScrollArea(self)
-
-
 		self.scroll.setWidget(self.widget)
 		self.scroll.setWidgetResizable(True)
 		self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -1015,19 +875,12 @@ class notifyTab(QWidget):
 
 
 	def updater(self):
-
 		marker=len(self.nFrames)
 		marker1 = len(self.nFrames)
 
 		for i in range(0,len(self.obj.notif)):
-
-
-
 			pixmap=QPixmap(self.obj.tagDict[self.obj.notif[i].tag])
 			pixmap = pixmap.scaled(50, 50)
-
-
-
 			self.tag_lbl.append(QLabel(self))
 			self.tag_lbl[marker].setPixmap(pixmap)
 			marker=marker+1
@@ -1039,10 +892,6 @@ class notifyTab(QWidget):
 			self.notif_lbl[marker].setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
 			self.notif_lbl[marker].setText(self.obj.notif[i1].notif_text)
 			self.notif_lbl[marker].setObjectName("nlbl")
-
-
-
-
 			self.btn.append(QPushButton('Get Link'))
 			self.btn[marker].setObjectName("btn")
 			marker+=1
@@ -1065,7 +914,7 @@ class notifyTab(QWidget):
 				self.nFrames[i3].setObjectName('nFrameEven')
 				self.nFrames[i3].setStyleSheet(' #nFrameEven{background-color: rgb(255, 250, 175);min-height:110px;max-height:110px;min-width:805px;}')
 
-		if len(self.nFrames)>=4 and self.d_==True:          # resolve the issue
+		if len(self.nFrames)>=4 and self.d_==True:
 			child = self.vbox.takeAt(len(self.nFrames))
 			if child.widget() is not None:
 				child.widget().deleteLater()
@@ -1074,68 +923,38 @@ class notifyTab(QWidget):
 			self.dframe.deleteLater()
 			self.d_=False
 
-		#for index, frame in enumerate(self.nFrames):
-		#	if index%2==0:
-		#		frame.setObjectName('nFrameEven')
-		#		self.nFrames[index].setStyleSheet(' #nFrameEven{background-color: rgb(255, 250, 175);min-height:110px;max-height:110px;min-width:805px;}')
-		#	else:
-		#		frame.setObjectName('nFrameOdd')
-		#		self.nFrames[index].setStyleSheet(' #nFrameOdd{background-color: rgb(255, 250, 175);min-height:110px;max-height:110px;min-width:805px;}')
-
-
 class notifyFrames(QFrame):
 
 	def __init__(self,lbl1,lbl2,btn):
-
 		super().__init__()
 		self.initUI(lbl1,lbl2,btn)
 
 
 	def initUI(self,lbl1,lbl2,btn):
-
 		grid = QGridLayout()
-
 		grid.addWidget(lbl2,1,0)
-
 		grid.addWidget(lbl1,1,0)
-
-
-
 		grid.setContentsMargins(70,0,70,0)
-
-
-
 		self.setLayout(grid)
 
 class courseFrames(QFrame):
 
 	def __init__(self,lbl,btn):
-
 		super().__init__()
 		self.initUI(lbl,btn)
 
-
 	def initUI(self,lbl,btn):
-
 		grid = QGridLayout()
-
 		grid.addWidget(lbl,1,0)
-
 		grid.addWidget(btn,1,1)
-
 		grid.setContentsMargins(70,0,70,0)
-
 		grid.setSpacing(0)
-
 		self.setLayout(grid)
-
-
 
 
 class itemTab(QWidget):
 
 	def __init__(self,parent_,id_):
-
 		super(itemTab,self).__init__(parent_)
 		self.parent_=parent_
 		self.obj = parent_.obj
@@ -1143,7 +962,6 @@ class itemTab(QWidget):
 		self.initUI()
 
 	def initUI(self):
-
 		self.obtn = {}
 		self.sbtn = {}
 		self.lbl = []
@@ -1154,7 +972,6 @@ class itemTab(QWidget):
 		self.x = 0
 		self.y=0
 
-
 		self.backBtn = QPushButton(QIcon(':/Assets/close2.png'),'Close')
 		self.backBtn.setObjectName('backBtn')
 		self.backBtn.clicked.connect(partial(self.parent_.closeItemTab,self.id_))
@@ -1164,20 +981,17 @@ class itemTab(QWidget):
 
 		for i1 in range(0,len(self.obj.courses[self.id_].items)):
 			self.lbl.append(ExtendedQLabel(self,i1))
-			self.lbl[i1].setText(self.obj.courses[self.id_].items[i1].i_name)
+			cname = self.shortenTabName(self.obj.courses[self.id_].items[i1].i_name)
+			self.lbl[i1].setText(cname)
 			self.lbl[i1].setObjectName("lbl")
-
 
 			self.sbtn[i1] = QPushButton('Save')
 			self.sbtn[i1].setObjectName("sbtn")
-
 
 			self.gbtn.append(QPushButton(QIcon(':/Assets/link.png'),''))
 			self.gbtn[i1].setObjectName("linkBtn")
 			self.gbtn[i1].id_ = i1
 			self.gbtn[i1].clicked.connect(partial(self.copyLink,self.gbtn[i1].id_))
-
-
 			self.sbtn[i1].clicked.connect(partial(self.saveItem,self.gbtn[i1].id_))
 
 			if self.obj.courses[self.id_].items[i1].saved==1:
@@ -1215,13 +1029,8 @@ class itemTab(QWidget):
 			self.vbox.addWidget(self.dframe)
 			self.d_=True
 
-
-
 		self.widget.setLayout(self.vbox)
-
 		self.scroll = QScrollArea(self)
-
-
 		self.scroll.setWidget(self.widget)
 		self.scroll.setWidgetResizable(True)
 		self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -1235,52 +1044,50 @@ class itemTab(QWidget):
 		self.setLayout(vbox1)
 
 
-
+	def shortenTabName(self,cname):
+		list1 =[]
+		for i, ch in enumerate(cname):
+				list1.append(ch)
+				if len(list1)==40:
+					if list1[i]== ' ':
+						list1.pop(i)
+					list1.append('...')
+					break
+		return ''.join(list1)
 
 	def updater(self):
 		self.x=+1
 		if self.obj.courses[self.id_].dummy_items is '':
 			return
 		else:
-
-			if  self.d_==True:         # resolve the issue
+			if  self.d_==True:
 				child = self.vbox.takeAt(len(self.iFrames))
 				if child.widget() is not None:
 					child.widget().deleteLater()
 				elif child.layout() is not None:
 					clearLayout(child.layout())
 				self.dframe.deleteLater()
-
 				self.d_=False
-
-
-
 
 			marker = len(self.iFrames)-1
 
 			for i1 in range(marker,len(self.obj.courses[self.id_].items)):
 				self.lbl.append(ExtendedQLabel(self,i1))
-				self.lbl[i1].setText(self.obj.courses[self.id_].items[i1].i_name)
+				cname = self.shortenTabName(self.obj.courses[self.id_].items[i1].i_name)
+				self.lbl[i1].setText(cname)
 				self.lbl[i1].setObjectName("lbl")
-
-
 				self.sbtn[i1] = QPushButton('Save')
 				self.sbtn[i1].setObjectName("sbtn")
-
-
 				self.gbtn.append(QPushButton(QIcon(':/Assets/link.png'),''))
 				self.gbtn[i1].setObjectName("linkBtn")
 				self.gbtn[i1].id_ = i1
 				self.gbtn[i1].clicked.connect(partial(self.copyLink,self.gbtn[i1].id_))
-
-
 				self.sbtn[i1].clicked.connect(partial(self.saveItem,self.gbtn[i1].id_))
 
 				if self.obj.courses[self.id_].items[i1].saved==1:
 					self.obtn[i1] = QPushButton('Open')
 					self.obtn[i1].setObjectName("obtn")
 					self.obtn[i1].clicked.connect(partial(self.openItem,self.gbtn[i1].id_))
-
 
 			for i2 in range(marker,len(self.obj.courses[self.id_].items)):
 				if self.obj.courses[self.id_].items[i2].saved==1:
@@ -1290,13 +1097,11 @@ class itemTab(QWidget):
 				else:
 					self.iFrames.append(itemFramesForum(self.lbl[i2],self.gbtn[i2]))
 
-
 			for i3 in range (marker+1,len(self.iFrames)):
 				if i3%2==0:
 					self.iFrames[i3].setObjectName('nFrameEven')
 				else:
 					self.iFrames[i3].setObjectName('nFrameEven')
-
 
 				self.vbox.addWidget(self.iFrames[i3])
 				y=0
@@ -1306,7 +1111,6 @@ class itemTab(QWidget):
 				self.dframe.setObjectName('nFrameDummy')
 				self.vbox.addWidget(self.dframe)
 				self.d_=True
-
 
 
 	def saveItem(self,id_):
@@ -1320,10 +1124,7 @@ class itemTab(QWidget):
 			self.obj.courses[self.id_].items[id_].olink = fileName[0]
 			self.obj.courses[self.id_].items[id_].saved=1
 			self.iFrames[id_+1].grid.addWidget(self.obtn[id_],1,3)
-
 			self.parent_.parent_.itemsWriter(fileName[0],self.id_,id_)
-
-
 
 	def openItem(self,id_):
 		fileName = self.obj.courses[self.id_].items[id_].olink
@@ -1337,14 +1138,12 @@ class itemTab(QWidget):
 		cb = QApplication.clipboard()
 		cb.clear(mode=cb.Clipboard)
 		cb.setText(self.obj.courses[self.id_].items[id_].glink, mode=cb.Clipboard)
-		reply = QMessageBox.question(self,'Moodly',"The link has been copied", QMessageBox.Ok)
 		pygame.init()
-		pygame.mixer.music.load("./sounds/message.wav")
+		pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/message.wav'))
 		pygame.mixer.music.play()
-
+		reply = QMessageBox.question(self,'Moodly',"The link has been copied", QMessageBox.Ok)
 		if reply == QMessageBox.Ok:
 			pass
-
 
 class ExtendedQLabel(QLabel):
 
@@ -1354,122 +1153,78 @@ class ExtendedQLabel(QLabel):
 	def mousePressEvent(self, ev):
 		pass
 
-
 class itemFrames(QFrame):
 
 	def __init__(self,lbl,btn1,btn2,btn3):
-
 		super().__init__()
 		self.initUI(lbl,btn1,btn2,btn3)
 
-
 	def initUI(self,lbl,btn1,btn2,btn3):
-
 		self.grid = QGridLayout()
-
 		self.grid.addWidget(lbl,1,0)
-
 		self.grid.addWidget(btn1,1,1)
 		self.grid.addWidget(btn2,1,2)
 		self.grid.addWidget(btn3,1,3)
-
-
 		self.grid.setContentsMargins(50,0,40,0)
-
 		self.grid.setSpacing(0)
-
 		self.setLayout(self.grid)
 
 class itemFramesForum(QFrame):
 
 	def __init__(self,lbl,btn1):
-
 		super().__init__()
 		self.initUI(lbl,btn1)
 
-
 	def initUI(self,lbl,btn1):
-
 		self.grid = QGridLayout()
-
 		self.grid.addWidget(lbl,1,0)
-
 		self.grid.addWidget(btn1,1,1)
-
 		self.grid.setContentsMargins(50,0,40,0)
-
 		self.grid.setSpacing(0)
-
 		self.setLayout(self.grid)
 
 class itemFramesNew(QFrame):
 
 	def __init__(self,lbl,btn1,btn2):
-
 		super().__init__()
 		self.initUI(lbl,btn1,btn2)
 
-
 	def initUI(self,lbl,btn1,btn2):
-
 		self.grid = QGridLayout()
-
 		self.grid.addWidget(lbl,1,0)
-
 		self.grid.addWidget(btn1,1,1)
-
 		self.grid.addWidget(btn2,1,2)
-
-
-
 		self.grid.setContentsMargins(50,0,40,0)
-
 		self.grid.setSpacing(0)
-
 		self.setLayout(self.grid)
+
 
 class topFrame(QFrame):
 
 	def __init__(self,btn,lbl):
-
 		super().__init__()
 		self.initUI(btn,lbl)
 
-
 	def initUI(self,btn,lbl):
-
 		grid = QGridLayout()
-
 		grid.addWidget(btn,1,1)
-
 		grid.addWidget(lbl,1,0,QtCore.Qt.AlignLeft)
-
 		grid.setContentsMargins(50,0,50,0)
-
 		grid.setSpacing(0)
-
 		self.setLayout(grid)
+
 
 class errorFrame(QFrame):
 
 	def __init__(self,lbl):
-
 		super().__init__()
 		self.initUI(lbl)
 
-
 	def initUI(self,lbl):
-
 		grid = QGridLayout()
-
 		grid.addWidget(lbl,1,0)
-
-
-
 		grid.setContentsMargins(50,0,50,0)
-
 		grid.setSpacing(0)
-
 		self.setLayout(grid)
 
 
@@ -1483,21 +1238,18 @@ class SystemTrayIcon(QSystemTrayIcon):
 		QSystemTrayIcon.__init__(self,icon, parent)
 		menu = QMenu(parent)
 
-		#rsnDict = {0:QSystemTrayIcon::NoIcon,1:QSystemTrayIcon::Information}
-
 		showAction = menu.addAction("Show Moodly")
-		self.updateAction = menu.addAction("Update Now")
-		exitAction = menu.addAction("Exit")
-
-		exitAction.triggered.connect(self.qtrigger.emit)
-		self.updateAction.triggered.connect(self.uptrigger.emit)
 		showAction.triggered.connect(self.trigger.emit)
 
+		exitAction = menu.addAction("Exit")
+		exitAction.triggered.connect(self.qtrigger.emit)
+
+		self.updateAction = menu.addAction("Update Now")
+		self.updateAction.triggered.connect(self.uptrigger.emit)
 		self.updateAction.setEnabled(False)
 
 		self.activated.connect(self.activateIcon)
 		self.setContextMenu(menu)
-
 
 
 	def display_notify(self,msg1,msg2,rsn):
@@ -1508,35 +1260,24 @@ class SystemTrayIcon(QSystemTrayIcon):
 
 	def timed_notify(self,msg1,msg2,rsn):
 		self.showMessage(msg1, msg2,rsn)
-		#winsound.PlaySound("SystemAsterisk", winsound.MB_ICONASTERISK)
 		pygame.init()
-		pygame.mixer.music.load("./sounds/notify.wav")
+		pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/notify.wav'))
 		pygame.mixer.music.play()
 
 	def activateIcon(self,reason):
-
 		if reason == QSystemTrayIcon.DoubleClick:
-
 			self.trigger.emit()
-
-
 
 
 class WorkThread(QtCore.QThread):
 
-
 	def __init__(self,obj):
 		QtCore.QThread.__init__(self)
 		self.obj=obj
+
 	def run(self):
-
-
 		cnt = self.obj.validate()
-
-
-
 		if cnt==True:
-
 				dbconn = Models()
 				try:
 					dbconn.createTables()
@@ -1550,16 +1291,14 @@ class WorkThread(QtCore.QThread):
 				dbconn.commit()
 
 				scrap = self.obj.courseScrapper()
-
 				if scrap == True:
 					dbconn = Models()
 					self.obj.writeCourses(dbconn)
-					self.obj.removeNotify(dbconn)  #write notify and fetchcourses
+					self.obj.removeNotify(dbconn)
 					self.obj.writeNotify(dbconn)
 					self.obj.alterData(dbconn,3)
 					dbconn.commit()
 					dbconn.closeConn()
-					#self.obj.emptyNotify()
 
 					self.obj.courses.extend(self.obj.dummy_courses)
 
@@ -1615,7 +1354,9 @@ class WorkThread(QtCore.QThread):
 		else:
 			pass
 
+
 class updateThread(QtCore.QThread):
+
 	def __init__(self,obj):
 		QtCore.QThread.__init__(self)
 		self.obj=obj
@@ -1636,9 +1377,8 @@ class updateThread(QtCore.QThread):
 		dbconn.commit()
 		dbconn.closeConn()
 		cnt = self.obj.courseScrapper()
-
-
 		self.obj.courses.extend(self.obj.dummy_courses)
+
 		for course in self.obj.courses:
 			course.itemScrapper(self.obj)
 			if course.flink is not '':
@@ -1649,19 +1389,16 @@ class updateThread(QtCore.QThread):
 			self.obj.status_msg[0] = "Last Update Successfully Completed. You have %s new notifications"
 			self.obj.status_msg[1] = 1
 			self.obj.d_n-=1
-
 		elif self.obj.h==1 and self.obj.error is not 0:
 			self.obj.notif[0].notif_text = 'Last Update Partially Completed at %s'%t
 			self.obj.notif[0].tag = 0
 			self.obj.status_msg[0] = "Last Update Partially Completed. You have %s new notifications"
 			self.obj.status_msg[1] = 2
 			self.obj.d_n-=1
-
 		else:
 			self.obj.notif = []
 			self.obj.notif.append(Notify('Last Update Failed at %s'%t,0,0,self.obj.scheduled,datetime.datetime.now()))
 			self.obj.d_n = 1
-
 
 		if self.obj.d_n is 0:
 			str_= "no"
@@ -1669,8 +1406,6 @@ class updateThread(QtCore.QThread):
 			str_ = str(self.obj.d_n)
 
 		self.obj.status_msg[0] = self.obj.status_msg[0] % str_
-
-
 		self.obj.n+=self.obj.d_n
 
 		dbconn = Models()
@@ -1684,6 +1419,7 @@ class updateThread(QtCore.QThread):
 		dbconn.closeConn()
 
 class itemsWriterThread(QtCore.QThread):
+
 	def __init__(self,fileName,id1,id2,id3,obj):
 		QtCore.QThread.__init__(self)
 		self.id3 = id3
@@ -1699,10 +1435,10 @@ class itemsWriterThread(QtCore.QThread):
 		dbconn.closeConn()
 
 class notifySeenThread(QtCore.QThread):
+
 	def __init__(self,obj):
 		QtCore.QThread.__init__(self)
 		self.obj=obj
-
 
 	def run(self):
 		self.obj.changeNotify()
@@ -1715,7 +1451,6 @@ class configWriterThread(QtCore.QThread):
 
 	def __init__(self,obj,text1,text2,combo1,combo2):
 		QtCore.QThread.__init__(self)
-
 		self.obj=obj
 		self.text1=text1
 		self.text2=text2
@@ -1724,13 +1459,10 @@ class configWriterThread(QtCore.QThread):
 
 
 	def run(self):
-
 		if self.text2 != self.obj.passwd :
 			cnt = self.obj.reValidate(self.text2)
-			#self.obj.status_msg[2]=1
 
 			if cnt == True:
-
 				if str(self.combo1) == str(self.obj.nIntval):
 					self.obj.intValChanged = 0
 				elif str(self.combo2) == str(self.obj.upIntval):
@@ -1747,9 +1479,7 @@ class configWriterThread(QtCore.QThread):
 				dbconn.commit()
 				dbconn.closeConn()
 
-
 			else:
-
 				pass
 
 		elif self.text2 == self.obj.passwd and self.combo1 == self.obj.nIntval and self.combo2==self.obj.upIntval:
@@ -1757,11 +1487,7 @@ class configWriterThread(QtCore.QThread):
 			self.obj.status_msg[0] = "There are no changes to save"
 			self.obj.status_msg[1] = 2
 
-
-
-
 		else:
-
 			if str(self.combo1) == str(self.obj.nIntval):
 				self.obj.intValChanged = 0
 			elif str(self.combo2) == str(self.obj.upIntval):

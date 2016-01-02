@@ -1,0 +1,3 @@
+import Moodly
+
+Moodly.run()

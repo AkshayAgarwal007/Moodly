@@ -4,7 +4,7 @@ import os
 class Models():
 
   def __init__(self):
-     sqlite_file=os.path.join(os.getcwd(), "./moodly.sqlite")
+     sqlite_file = os.path.join(os.path.dirname(__file__), 'moodly.sqlite')
      self.conn=sqlite3.connect(sqlite_file,timeout=120)
 
 
