@@ -1,5 +1,6 @@
 # Moodly
-![Moodly](https://github.com/AkshayAgarwal007/Moodly/blob/master/Assets/moodly.gif "Moodly")
+
+<div align="center"><img src="https://github.com/AkshayAgarwal007/Moodly/blob/master/Assets/moodly.gif"></div>
 
 Student Intimation System for Moodle (NIIT University).
 
