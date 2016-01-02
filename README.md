@@ -1,7 +1,7 @@
 
 <div align="center"><img src="https://github.com/AkshayAgarwal007/Moodly/blob/master/Assets/moodly.gif"></div>
 
-# Moodly
+<div align="center">## Moodly</div>
 
 Student Intimation System for Moodle (NIIT University).
 
