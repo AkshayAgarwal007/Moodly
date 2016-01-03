@@ -1,5 +1,5 @@
 
-<div align="center"><img src="https://github.com/AkshayAgarwal007/Moodly/blob/master/Assets/moodly.gif"></div>
+<div align="center"><img src="https://github.com/AkshayAgarwal007/Moodly/blob/master/img/moodly_logo.png"></div>
 
 ## What is Moodly?
 
