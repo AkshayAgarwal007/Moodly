@@ -9,6 +9,64 @@ Moodly is written in Python. It uses PyQt5, a set of python bindings for the Qt5
 
 This does not make use of any Moodle API because it was intended to be a Web Scrapping Project. 
 
+##Installation
+
+###Windows
+
+1. Download the [.7z file] (https://www.dropbox.com/s/iv082uae4e4zr41/Moodly-1.0-Alpha-Linux.tar.gz?dl=0) and extract it.
+   You need to have [7-Zip] (http://www.7-zip.org/download.html) installed to be able to extract it.
+
+2. Copy Moodly.exe(which you'll get after extracting) to your preferable location. And that's it.
+
+**To launch the application on startup**
+
+1. Create a shortcut for Moodly.exe
+
+2. From the start menu open the run command box and type `shell:startup` and click on Ok.
+
+3. Copy the shortcut to this location (I.e the startup directory). And you are done. Now reboot and Moodly should launch on startup. 
+
+###Linux
+
+1. Download the tar file and extract it.
+
+2. Copy the extracted Moodly executable to your preferable location. And Thats it!
+
+**To lauch the application on startup**
+
+1. Open the terminal.
+
+2. Type `$PATH` and check whether `/usr/bin` is set on your Linux path or not, it should definitely be there.
+
+3. Create a symlink to Moodly there by simply typing
+
+   ```
+   cd /usr/bin (or /usr/local/bin or ~/.local/bin)
+
+   sudo ln -s  /path/to/Moodly (for e.g sudo ln -s $HOME/Moodly)
+   ```
+
+4. Copy the extracted Moodly.desktop to `~/.config/autostart/ or (/etc/xdg/autostart)`
+   ```
+   cp /path/to/Moodly.desktop ~/.config/autostart/
+   ```
+
+5. And you are done. Now reboot and Moodly should launch on startup. 
+
+**Note:**
+
+There are several ways you can make the application launch on startup and there are varied answers you'll find for this on the web. Not all will work You should find the one that suits you the best. The one for windows should definitely work but the answer varies for different linux distros.
+
+You can do many things like add the Moodly executable in a directory and add its path to `~/.profile` or `~/.bash_profile` and create a bash script to launch the executable and store it in `/etc/init.d` and then create a symlink for it in `rc.d` or use the `rc.local` way or use `crontabs` or take the `gui route` and add it to `Startup Applications Preferences`. At the end of the day you are a linux user and you probably know how to solve your issues if you are facing one.
+
+These are a few links that should help you understand things better:
+
+* [Set path permanently on linux](http://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux)
+
+* [Difference between bashrc and bash-profile](http://stackoverflow.com/questions/415403/whats-the-difference-between-bashrc-bash-profile-and-environment)
+
+* [Launch program on startup-linux](http://stackoverflow.com/questions/7221757/run-automatically-program-on-startup-under-linux-ubuntu)
+
 ##Using Moodly
 
 If you have been able to successfully install Moodly, this should be very easy for you.
@@ -75,6 +133,8 @@ Clicking the close button will minimize Moodly to the System Tray. You can eithe
 ##Developers
 
 Though this application is specifically made for NU-Moodle, the code can be modified to work with any website that makes use of Moodle or has a similar structure. However, anyone who wants to build such an app would prefer to use Moodle APIs and different tools because of the recent trend to build a universal app, the code base for Moodly can serve as a learning resource for those learning to make GUI applications using Python, working on a web scrapping project using Python or just wants to explore Python more.
+
+Since this app targets a higly specific group of people there might not be many developers visiting this repo. Though there are many aspects of this application like (Web Scrapping, Making GUI apps using Python, Packaging a Python app,multithreading. writing non-blocking code, working with libraries like Sqlite3, requests and BeautifulSoup) which is of importance to any python developer(especially a beginner/intermidiate) and I would like to explain those things to you( You must be interested if you are reading this ). But instead of doing that here I would prefer to write a blog and I would add the link to the same here as soon as I do so.
 
 ##Contributing 
 
