@@ -14,6 +14,10 @@ a = Analysis(['run.py'],
              win_no_prefer_redirects=None,
              win_private_assemblies=None,
              cipher=block_cipher)
+             
+a.datas+= [('sounds/notify.wav','./sounds/notify.wav' , 'DATA'),
+           ('sounds/message.wav','./sounds/message.wav' , 'DATA')]
+           
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
