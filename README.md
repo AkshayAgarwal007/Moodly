@@ -3,9 +3,9 @@
 
 ## What is Moodly?
 
-Moodly is a student intimation system for Moodle (NIIT University). It a desktop app which keeps you updated with notifications of files uploaded or any forum updates (of the courses you are registered in) on NU-Moodle. In addition to that it also helps you download and manage your Moodle course files. 
+Moodly is a student intimation system for Moodle (NIIT University). It is a desktop app which keeps you updated with notifications of files uploaded or any forum updates (of the courses you are registered in) on NU-Moodle. In addition to that it also helps you download and manage your Moodle course files. 
 
-Moodly is written in Python. It uses PyQt5, a set of python bindings for the Qt5 Application framework for its GUI, Requests for sending HTTP requests and BeautifulSoup for HTML parsing.
+Moodly is written in Python. It uses PyQt5, a set of Python bindings for the Qt5 Application framework for its GUI, Requests for sending HTTP requests and BeautifulSoup for HTML parsing.
 
 This does not make use of any Moodle API because it was intended to be a Web Scrapping Project. 
 
@@ -16,7 +16,7 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
 1. Download the [.7z file] (https://www.dropbox.com/s/iv082uae4e4zr41/Moodly-1.0-Alpha-Linux.tar.gz?dl=0) and extract it.
    You need to have [7-Zip] (http://www.7-zip.org/download.html) installed to be able to extract it.
 
-2. Copy Moodly.exe(which you'll get after extracting) to your preferable location. And that's it.
+2. Copy the extracted Moodly.exe to your preferable location. And that's it.
 
 **To launch the application on startup**
 
@@ -24,11 +24,11 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
 
 2. From the start menu open the run command box and type `shell:startup` and click on Ok.
 
-3. Copy the shortcut to this location (I.e the startup directory). And you are done. Now reboot and Moodly should launch on startup. 
+3. Copy the shortcut to this location (i.e the startup directory). And you are done. Now reboot and Moodly should launch on startup. 
 
 ###Linux
 
-1. Download the tar file and extract it.
+1. Download the [tar file](https://www.dropbox.com/s/px4mi7usczio9lp/Moodly.7z?dl=0) and extract it.
 
 2. Copy the extracted Moodly executable to your preferable location. And Thats it!
 
@@ -132,9 +132,9 @@ Clicking the close button will minimize Moodly to the System Tray. You can eithe
 
 ##Developers
 
-Though this application is specifically made for NU-Moodle, the code can be modified to work with any website that makes use of Moodle or has a similar structure. However, anyone who wants to build such an app would prefer to use Moodle APIs and different tools because of the recent trend to build a universal app, the code base for Moodly can serve as a learning resource for those learning to make GUI applications using Python, working on a web scrapping project using Python or just wants to explore Python more.
+Though this application is specifically made for NU-Moodle, the code can be modified to work with any website that makes use of Moodle or has a similar structure. However, anyone who wants to build such an app would prefer to use Moodle APIs and different tools because of the recent trend to build a universal app and packaging issues associated with Python Applications, the code base for Moodly can serve as a learning resource for those learning to make GUI applications using Python, working on a web scrapping project using Python or just wants to explore Python more.
 
-Since this app targets a higly specific group of people there might not be many developers visiting this repo. Though there are many aspects of this application like (Web Scrapping, Making GUI apps using Python, Packaging a Python app,multithreading. writing non-blocking code, working with libraries like Sqlite3, requests and BeautifulSoup) which is of importance to any python developer(especially a beginner/intermidiate) and I would like to explain those things to you( You must be interested if you are reading this ). But instead of doing that here I would prefer to write a blog and I would add the link to the same here as soon as I do so.
+Since this app targets a higly specific group of people there might not be many developers visiting this repo. Though there are many aspects of this application like (Web Scrapping, Making GUI apps using Python, Packaging a Python app,multithreading. writing non-blocking code, working with libraries like Sqlite3, requests and BeautifulSoup) which is of importance to any Python developer and I would like to explain those things to you(You must be interested if you are reading this). But instead of doing that here I would prefer to write a blog and I would add the link to the same here as soon as I do so.
 
 ##Contributing 
 
