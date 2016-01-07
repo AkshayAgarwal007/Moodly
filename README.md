@@ -3,7 +3,7 @@
 
 ## What is Moodly?
 
-Moodly is a student intimation system for Moodle (NIIT University). It is a desktop app which keeps you updated with notifications of files uploaded or any forum updates (of the courses you are registered in) on NU-Moodle. In addition to that it also helps you download and manage your Moodle course files. 
+Moodly is a student intimation system for [Moodle](https://moodle.org/) (NIIT University). It is a desktop app which keeps you updated with notifications of files uploaded or any forum updates (of the courses you are registered in) on [NU-Moodle](https://moodle.niituniversity.in/moodle/). In addition to that it also helps you download and manage your Moodle course files. 
 
 Moodly is written in Python. It uses PyQt5, a set of Python bindings for the Qt5 Application framework for its GUI, Requests for sending HTTP requests and BeautifulSoup for HTML parsing.
 
@@ -13,9 +13,8 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
 
 ###Windows
 
-1. Download the [.7z file] (https://www.dropbox.com/s/iv082uae4e4zr41/Moodly-1.0-Alpha-Linux.tar.gz?dl=0) and extract it.
-   You need to have [7-Zip] (http://www.7-zip.org/download.html) installed to be able to extract it.
-
+1. Download the [.7z file] (https://www.dropbox.com/s/px4mi7usczio9lp/Moodly.7z?dl=0) and extract it.
+  
 2. Copy the extracted Moodly.exe to your preferable location. And that's it.
 
 **To launch the application on startup**
@@ -28,7 +27,7 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
 
 ###Linux
 
-1. Download the [tar file](https://www.dropbox.com/s/px4mi7usczio9lp/Moodly.7z?dl=0) and extract it.
+1. Download the [tar file](https://www.dropbox.com/s/iv082uae4e4zr41/Moodly-1.0-Alpha-Linux.tar.gz?dl=0) and extract it.
 
 2. Copy the extracted Moodly executable to your preferable location. And Thats it!
 
@@ -134,14 +133,14 @@ Clicking the close button will minimize Moodly to the System Tray. You can eithe
 
 Though this application is specifically made for NU-Moodle, the code can be modified to work with any website that makes use of Moodle or has a similar structure. However, anyone who wants to build such an app would prefer to use Moodle APIs and different tools because of the recent trend to build a universal app and packaging issues associated with Python Applications, the code base for Moodly can serve as a learning resource for those learning to make GUI applications using Python, working on a web scrapping project using Python or just wants to explore Python more.
 
-Since this app targets a higly specific group of people there might not be many developers visiting this repo. Though there are many aspects of this application like (Web Scrapping, Making GUI apps using Python, Packaging a Python app,multithreading. writing non-blocking code, working with libraries like Sqlite3, requests and BeautifulSoup) which is of importance to any Python developer and I would like to explain those things to you(You must be interested if you are reading this). But instead of doing that here I would prefer to write a blog and I would add the link to the same here as soon as I do so.
+Since this app targets a higly specific group of people there might not be many developers visiting this repo. Though there are many aspects of this application like (Web Scrapping, Making GUI apps using Python, Packaging a Python app,multithreading. writing non-blocking code, working with libraries like sqlite3, requests and BeautifulSoup) which is of importance to any Python developer and I would like to explain those things to you (You must be interested if you are reading this). But instead of doing that here I would prefer to write a blog on this topic and I would add the link to the same here as soon as I do so.
 
 ##Contributing 
 
-* Found a bug? Report it on GitHub Issues and include a code sample.
-* Fork the repository and work on a feature update. 
-* Users can also contribute by reporting a bug by simply mailing me. 
+* Found a bug? Report it on GitHub [Issues](https://github.com/AkshayAgarwal007/Moodly/issues) and include a code sample.
+* [Fork](https://github.com/AkshayAgarwal007/Moodly/issues#fork-destination-box) the repository and work on a feature update. 
+* Users can also contribute by reporting a bug by simply [mailing me](mailto:agarwal.akshay.akshay8@gmail.com). 
 
 ___
 
-Developed and maintained by Akshay Agarwal.
+Developed and maintained by [Akshay Agarwal](mailto:agarwal.akshay.akshay8@gmail.com). Any suggestions are welcomed.
