@@ -32,7 +32,7 @@ class mainWindow(QMainWindow):
 
 	def initUI(self):
 		self.resize(820,500)
-		self.setWindowTitle('Moodly 1.0 Aplha - Configure')
+		self.setWindowTitle('Moodly 1.0 Alpha - Configure')
 		self.setWindowIcon(QIcon(':/Assets/moodly.gif'))
 		self.setFixedSize(820,500)
 		self.center()
