@@ -6,7 +6,7 @@ import sys
 from PyQt5 import QtGui
 from .logic import *
 from .style import *
-from resource import *
+from .resource import *
 
 
 def main():
