@@ -252,7 +252,6 @@ class mainWindow(QMainWindow):
 		for tab in self.tabWidget.tab:
 			tab.updater()
 		self.obj.updating = False
-		print (self.obj.updating)
 		self.c_timer = QTimer()
 		self.c_timer.timeout.connect(partial(self.hideStatus,0))
 		self.c_timer.setSingleShot(True)
