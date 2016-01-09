@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QApplication
 import PyQt5.QtCore
-import view
+from . import view
 import os
 import sys
 from PyQt5 import QtGui
-from logic import *
-from style import *
+from .logic import *
+from .style import *
 from resource import *
 
 
