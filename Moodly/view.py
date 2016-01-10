@@ -1128,10 +1128,20 @@ class itemTab(QWidget):
 	def openItem(self,id_):
 		fileName = self.obj.courses[self.id_].items[id_].olink
 		if sys.platform == "win32":
-			os.startfile(fileName)
+			if os.path.exists(fileName):
+				os.startfile(fileName)
+			else:
+				reply = QMessageBox.information(self,'Moodly',"This file no longer exists. Kindly save a new link.", QMessageBox.Ok)
+				if reply == QMessageBox.Ok:
+					pass
 		else:
-			opener ="open" if sys.platform == "darwin" else "xdg-open"
-			subprocess.call([opener, fileName])
+			if os.path.exists(fileName):
+				opener ="open" if sys.platform == "darwin" else "xdg-open"
+				subprocess.call([opener, fileName])
+			else:
+				reply = QMessageBox.information(self,'Moodly',"This file no longer exists. Kindly save a new link.", QMessageBox.Ok)
+				if reply == QMessageBox.Ok:
+					pass
 
 	def copyLink(self,id_):
 		cb = QApplication.clipboard()
