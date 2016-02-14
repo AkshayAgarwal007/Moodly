@@ -110,7 +110,7 @@ This might be little tedious but thankfully the next feature update Moodly will 
 The notification tab would contain all the update notifications.
 
 
-![Notifications Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/notify_tab_linux.png "Notifications Tab")
+![Notifications Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/notify_tab.png "Notifications Tab")
 
 ##Shortcuts 
 
