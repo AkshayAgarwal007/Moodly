@@ -9,12 +9,12 @@ import time
 import datetime
 from PyQt5 import QtGui
 from PyQt5.QtGui import QClipboard
-from assets import*
+from .resource import*
 from functools import partial
 import os
-from logic import Notify
+from .logic import Notify
 import re
-from models import *
+from .models import *
 import sys
 import subprocess
 

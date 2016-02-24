@@ -1,4 +1,4 @@
-from models import *
+from .models import *
 from requests import session
 from bs4 import BeautifulSoup
 import re
