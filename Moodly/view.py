@@ -1,23 +1,23 @@
 from PyQt5.QtWidgets import (QMainWindow, QLineEdit, QComboBox, QCheckBox, QLabel,QWidget, QPushButton, QMessageBox,
 			     QDesktopWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QProgressBar, QFrame, QTabWidget,
-			     QScrollArea,QAction, qApp,QStatusBar,QFileDialog,QSystemTrayIcon, QMenu,QApplication)
+			     QScrollArea,QAction, qApp,QStatusBar,QFileDialog,QSystemTrayIcon, QMenu,QApplication,QTextBrowser)
 from PyQt5.QtGui import QIcon, QPixmap,QImage
 from PyQt5.QtCore import QBasicTimer,QTimer,pyqtSignal
 from PyQt5 import QtCore
-from PyQt5.QtCore import QEvent
+from PyQt5.QtCore import QEvent,QUrl
 import time
 import datetime
 from PyQt5 import QtGui
 from PyQt5.QtGui import QClipboard
-from .resource import*
+from assets import*
 from functools import partial
 import os
-from .logic import Notify
+from logic import Notify
 import re
-from .models import *
+from models import *
 import sys
 import subprocess
-import pygame
+
 
 
 
@@ -31,10 +31,10 @@ class mainWindow(QMainWindow):
 		self.initUI()
 
 	def initUI(self):
-		self.resize(820,500)
-		self.setWindowTitle('Moodly 1.0 Alpha - Configure')
+		self.resize(850,500)
+		self.setWindowTitle('Moodly 1.0 Beta - Configure')
 		self.setWindowIcon(QIcon(':/Assets/moodly.gif'))
-		self.setFixedSize(820,500)
+		self.setFixedSize(830,500)
 		self.center()
 
 		self.sysTray=QWidget()
@@ -55,7 +55,7 @@ class mainWindow(QMainWindow):
 			self.setCentralWidget(setupWidget(self))
 		elif self.obj.configured==2:
 			self.setStyleSheet('''#Window1{background-color: light gray;}''')
-			self.setWindowTitle('Moodly 1.0 Alpha')
+			self.setWindowTitle('Moodly 1.0 Beta')
 			self.setMenuBar()
 			self.tabWidget = tabWidget(self)
 			self.setCentralWidget(self.tabWidget)
@@ -169,8 +169,17 @@ class mainWindow(QMainWindow):
 		self.obj.updating = True
 		self.showStatus('Updating Moodly.....',0)
 		self.thread=updateThread(self.obj)
-		self.thread.finished.connect(self.tabUpdater)
+		self.thread.finished.connect(self.downloader)
 		self.thread.start()
+
+	def downloader(self):
+		if int(self.obj.dwnld)==1:
+			self.showStatus('Downloading Files.....',0)
+			self.dthread=downloadThread(self.obj)
+			self.dthread.finished.connect(self.tabUpdater)
+			self.dthread.start()
+		else:
+			self.tabUpdater()
 
 
 	def closeEvent(self, event):
@@ -212,10 +221,7 @@ class mainWindow(QMainWindow):
 			self.updater()
 
 		else:
-			pygame.init()
-			pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/message.wav'))
-			pygame.mixer.music.play()
-			reply = QMessageBox.question(self,'Moodly',"An update is already in progress. ", QMessageBox.Ok)
+			reply = QMessageBox.information(self,'Moodly',"An update is already in progress. ", QMessageBox.Ok)
 			if reply == QMessageBox.Ok:
 				pass
 
@@ -238,6 +244,7 @@ class mainWindow(QMainWindow):
 		self.thread.start()
 		self.set=1
 		self.setWidget()
+
 
 
 	def notify(self):
@@ -282,9 +289,9 @@ class mainWindow(QMainWindow):
 			return self.nt
 
 
-	def configWriter(self,text1,text2,combo1,combo2):
+	def configWriter(self,text1,text2,combo1,combo2,text3,path_):
 		self.sid3=self.showStatus('Configuring...',1)
-		self.c_thread = configWriterThread(self.obj,text1,text2,combo1,combo2)
+		self.c_thread = configWriterThread(self.obj,text1,text2,combo1,combo2,text3,path_)
 		self.c_thread.finished.connect(self.reConfigModify)
 		self.c_thread.start()
 
@@ -343,7 +350,7 @@ class configureWidget(QWidget):
 		self.qle2.setObjectName("qle")
 		self.qle2.setPlaceholderText("Enter Your Moodle Password")
 
-		lbltxt = ['Username', 'Password', 'Keep Notifying', 'Update Interval' ]
+		lbltxt = ['Username', 'Password','Auto-Download', 'Keep Notifying', 'Update Interval' ]
 		lbl=[]
 		self.status_label = QLabel(self)
 		self.status_label.setObjectName('slbl')
@@ -371,6 +378,10 @@ class configureWidget(QWidget):
 		btn.setObjectName("btn")
 		btn.clicked.connect(self.callRetrieve)
 
+		self.c = QCheckBox()
+		self.c.stateChanged.connect(self.selectDirs)
+		self.path_=''
+
 		grid = QGridLayout()
 
 		for i2 in range(0,len(lbl)):
@@ -380,12 +391,14 @@ class configureWidget(QWidget):
 
 		grid.addWidget(self.qle2,2,1)
 
-		grid.addWidget(self.combo2,3,1)
+		grid.addWidget(self.c,3,1)
 
-		grid.addWidget(self.combo,4,1)
+		grid.addWidget(self.combo2,4,1)
 
-		grid.addWidget(btn, 5,0)
-		grid.addWidget(self.status_label,5,1)
+		grid.addWidget(self.combo,5,1)
+
+		grid.addWidget(btn, 6,0)
+		grid.addWidget(self.status_label,6,1)
 
 		grid.setHorizontalSpacing(50)
 		grid.setVerticalSpacing(0)
@@ -400,10 +413,28 @@ class configureWidget(QWidget):
 			self.callRetrieve()
 
 
+	def selectDirs(self,event):
+		if self.c.isChecked():
+			self.path_ = QFileDialog.getExistingDirectory(self, 'Select Directory(for downloaded files)')
+			if self.path_ =='':
+				if self.obj.dir_url =='':
+					self.path_ = os.environ['PROGRAMFILES']
+					self.path_ = os.path.join(path_,"Moodly")
+					self.c.setText(self.path_)
+				else:
+					self.path_ = self.obj.dir_url
+			self.c.setText(self.path_)
+		else:
+			self.c.setText('')
+			self.path_=''
 
 	def callRetrieve(self):
+		if self.c.isChecked():
+			str_=1
+		else:
+			str_=0
 		self.obj.saveUserData(str(self.qle1.text()),
-						  str(self.qle2.text()),str(self.combo2.currentText()),str(self.combo.currentText()))
+						  str(self.qle2.text()),str(self.combo2.currentText()),str(self.combo.currentText()),str(str_),self.path_)
 
 		self.parent_.verify()
 
@@ -428,14 +459,21 @@ class reConfigureWidget(QWidget):
 
 		self.updating=False
 
-		lbltxt = ['Username', 'Password', 'Keep Notifying', 'Update Interval' ]
+		lbltxt = ['Username', 'Password','Auto-Download', 'Keep Notifying', 'Update Interval' ]
 		lbl=[]
 		self.status_label = QLabel(self)
 		self.status_label.setObjectName('slbl')
 
 		self.obj.config_status =''
+		self.c = QCheckBox()
+		self.c.setText(self.obj.dir_url)
 
+		if int(self.obj.dwnld)==1:
+			self.c.toggle()
+		self.c.stateChanged.connect(self.selectDirs)
+		self.path_ =self.obj.dir_url
 		self.status_label.setText('')
+
 		for i in range(0,len(lbltxt)):
 			lbl.append(QLabel(self))
 			lbl[i].setText(lbltxt[i])
@@ -480,13 +518,14 @@ class reConfigureWidget(QWidget):
 
 		grid.addWidget(self.qle1,1,1)
 		grid.addWidget(self.qle2,2,1)
-		grid.addWidget(self.combo2,3,1)
-		grid.addWidget(self.combo,4,1)
-		grid.addWidget(btn1, 5,0)
-		grid.addWidget(btn2, 5,1)
+		grid.addWidget(self.c,3,1)
+		grid.addWidget(self.combo2,4,1)
+		grid.addWidget(self.combo,5,1)
+		grid.addWidget(btn1, 6,0)
+		grid.addWidget(btn2, 6,1)
 		grid.setHorizontalSpacing(70)
-		grid.setVerticalSpacing(40)
-		grid.setContentsMargins(160, 35, 150, 0)
+		grid.setVerticalSpacing(30)
+		grid.setContentsMargins(160, 18, 150, 0)
 
 		hbox1 = QHBoxLayout()
 		hbox1.addLayout(grid)
@@ -496,7 +535,7 @@ class reConfigureWidget(QWidget):
 		self.hbox2.addWidget(self.status_label)
 
 		vbox = QVBoxLayout()
-		vbox.setContentsMargins(0,30,0,0)
+		vbox.setContentsMargins(0,48,0,0)
 		vbox.setSpacing(0)
 		vbox.addLayout(hbox1)
 		vbox.addLayout(self.hbox2)
@@ -521,19 +560,33 @@ class reConfigureWidget(QWidget):
 
 	def callValidate(self):
 		if self.obj.updating == True:
-			pygame.init()
-			pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/message.wav'))
-			pygame.mixer.music.play()
-			reply = QMessageBox.question(self,'Moodly',"An update is in progress. Kindly wait. ", QMessageBox.Ok)
+			reply = QMessageBox.information(self,'Moodly',"An update is in progress. Kindly wait. ", QMessageBox.Ok)
 
 			if reply == QMessageBox.Ok:
 				pass
 		else:
+			if self.c.isChecked():
+				str_=1
+			else:
+				str_=0
 			self.parent_.updating = True
 			self.parent_.parent_.configWriter(str(self.qle1.text()),
-							  str(self.qle2.text()),str(self.combo2.currentText()),str(self.combo.currentText()))
+							  str(self.qle2.text()),str(self.combo2.currentText()),str(self.combo.currentText()),str(str_),self.path_)
 
-
+	def selectDirs(self,event):
+		if self.c.isChecked():
+			self.path_ = QFileDialog.getExistingDirectory(self, 'Select Directory(for downloaded files)')
+			if self.path_ =='':
+				if self.obj.dir_url =='':
+					self.path_ = os.environ['PROGRAMFILES']
+					self.path_ = os.path.join(self.path_,"Moodly")
+					self.c.setText(self.path_)
+				else:
+					self.path_ = self.obj.dir_url
+			self.c.setText(self.path_)
+		else:
+			self.c.setText('')
+			self.path_=''
 
 	def closeConfig(self):
 		self.parent_.removeTab(self.parent_.indexOf(self))
@@ -601,6 +654,7 @@ class tabWidget(QTabWidget):
 	def initUI(self):
 		self.tab = []
 		self.marker = 0
+		self.bon=False
 		self.updating = False
 
 		self.tab1=courseTab(self)
@@ -642,6 +696,20 @@ class tabWidget(QTabWidget):
 					break
 		return ''.join(list1)
 
+	def openTextBrowser(self,url,cname,fname):
+		if self.bon==False:
+			self.browser = Browser(self,url,cname,fname)
+			self.addTab(self.browser,QIcon(':/Assets/quote.png'), "Forum News")
+			self.setTabToolTip(self.indexOf(self.browser),"Forum News - " +cname)
+			self.setCurrentIndex(self.indexOf(self.browser))
+			self.bon=True
+		else:
+			self.closeTextBrowser()
+			self.openTextBrowser(url,cname,fname)
+
+	def closeTextBrowser(self):
+		self.removeTab(self.indexOf(self.browser))
+		self.bon=False
 
 	def callItemTab(self,id_):
 		if self.marker ==0:
@@ -673,7 +741,53 @@ class tabWidget(QTabWidget):
 					self.setCurrentIndex(self.indexOf(self.tab1))
 				else:
 					self.setCurrentIndex(self.indexOf(self.tab[self.marker-1]))
-				break
+				#break
+
+class Browser(QWidget):
+	def __init__(self,parent_,url,cname,fname):
+		super(Browser,self).__init__(parent_)
+		self.parent_=parent_
+		self.initUI(url,cname,fname)
+
+	def initUI(self,url,cname,fname):
+		lbl = QLabel()
+		lbl.setText('Forum News - '+cname)
+		lbl.setObjectName('hlbl')
+		self.browser = QTextBrowser()
+		self.browser.document().setDefaultStyleSheet('p{font-size:12px;} div{margin-left:20px;}')
+
+		f = open(url,'r')
+		ftext = '<div><br><h3><b>%s</b></h3>'%fname + str(f.read())+'<br></div>'
+		self.browser.setHtml(ftext)
+		self.browser.setFrameStyle(QFrame.NoFrame)
+
+		self.backBtn = QPushButton(QIcon(':/Assets/close2.png'),'Close')
+		self.backBtn.setObjectName('backBtn')
+		self.backBtn.clicked.connect(partial(self.parent_.closeTextBrowser))
+		frame = topFrame(self.backBtn,lbl)
+		frame.setObjectName('nFrameEven')
+
+
+		self.widget = QWidget(self)
+		self.vbox = QVBoxLayout()
+		self.vbox.setSpacing(3)
+		self.vbox.addWidget(frame)
+		self.vbox.addWidget(self.browser)
+
+		self.vbox.setContentsMargins(0,0,0,0)
+		self.widget.setLayout(self.vbox)
+		self.scroll = QScrollArea(self)
+		self.scroll.setWidget(self.widget)
+		self.scroll.setWidgetResizable(True)
+		self.scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+		self.scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+
+		vbox1 = QVBoxLayout()
+		vbox1.setContentsMargins(0,0,0,0)
+		vbox1.setSpacing(0)
+
+		vbox1.addWidget(self.scroll)
+		self.setLayout(vbox1)
 
 
 class courseTab(QWidget):
@@ -822,7 +936,7 @@ class notifyTab(QWidget):
 
 		for i in range(0,len(self.obj.notif)):
 			pixmap=QPixmap(self.obj.tagDict[self.obj.notif[i].tag])
-			pixmap = pixmap.scaled(50, 50)
+			pixmap = pixmap.scaled(45, 45)
 			self.tag_lbl.append(QLabel(self))
 			self.tag_lbl[i].setPixmap(pixmap)
 
@@ -879,7 +993,7 @@ class notifyTab(QWidget):
 
 		for i in range(0,len(self.obj.notif)):
 			pixmap=QPixmap(self.obj.tagDict[self.obj.notif[i].tag])
-			pixmap = pixmap.scaled(50, 50)
+			pixmap = pixmap.scaled(45, 45)
 			self.tag_lbl.append(QLabel(self))
 			self.tag_lbl[marker].setPixmap(pixmap)
 			marker=marker+1
@@ -966,6 +1080,7 @@ class itemTab(QWidget):
 		self.lbl = []
 		self.gbtn = []
 		self.iFrames =[]
+		self.tag_lbl=[]
 		self.d_ =False
 
 		self.x = 0
@@ -978,11 +1093,27 @@ class itemTab(QWidget):
 		self.clbl.setText(self.obj.courses[self.id_].c_name.upper())
 		self.clbl.setObjectName('hlbl')
 
+		a = ["assignment","exam","quiz"]
+
+		for iz in range(0,len(self.obj.courses[self.id_].items)):
+			if self.obj.courses[self.id_].items[iz].saved==2:
+				pixmap=QPixmap(self.obj.tagDict[3])
+			else:
+				 str_= self.obj.courses[self.id_].items[iz].i_name.lower()
+				 if any(x in str_ for x in a):
+					 pixmap=QPixmap(self.obj.tagDict[4])
+				 else:
+					 pixmap=QPixmap(self.obj.tagDict[self.obj.courses[self.id_].items[iz].type+2])
+
+			pixmap = pixmap.scaled(45, 45)
+			self.tag_lbl.append(QLabel(self))
+			self.tag_lbl[iz].setPixmap(pixmap)
+
 		for i1 in range(0,len(self.obj.courses[self.id_].items)):
 			self.lbl.append(ExtendedQLabel(self,i1))
 			cname = self.shortenTabName(self.obj.courses[self.id_].items[i1].i_name)
 			self.lbl[i1].setText(cname)
-			self.lbl[i1].setObjectName("lbl")
+			self.lbl[i1].setObjectName("ilbl")
 
 			self.sbtn[i1] = QPushButton('Save')
 			self.sbtn[i1].setObjectName("sbtn")
@@ -995,18 +1126,21 @@ class itemTab(QWidget):
 
 			if self.obj.courses[self.id_].items[i1].saved==1:
 				self.obtn[i1] = QPushButton('Open')
-				self.obtn[i1].setObjectName("obtn")
+				if self.obj.courses[self.id_].items[i1].dwnld == 1:
+					self.obtn[i1].setObjectName("obtn")
+				else:
+					self.obtn[i1].setObjectName("rbtn")
 				self.obtn[i1].clicked.connect(partial(self.openItem,self.gbtn[i1].id_))
 
 		self.iFrames.append(topFrame(self.backBtn,self.clbl))
 
 		for i2 in range(0,len(self.obj.courses[self.id_].items)):
 			if self.obj.courses[self.id_].items[i2].saved==1:
-				self.iFrames.append(itemFrames(self.lbl[i2],self.gbtn[i2],self.sbtn[i2],self.obtn[i2]))
+				self.iFrames.append(itemFrames(self.lbl[i2],self.gbtn[i2],self.sbtn[i2],self.obtn[i2],self.tag_lbl[i2]))
 			elif self.obj.courses[self.id_].items[i2].saved==0:
-				self.iFrames.append(itemFramesNew(self.lbl[i2],self.gbtn[i2],self.sbtn[i2]))
+				self.iFrames.append(itemFramesNew(self.lbl[i2],self.gbtn[i2],self.sbtn[i2],self.tag_lbl[i2]))
 			else:
-				self.iFrames.append(itemFramesForum(self.lbl[i2],self.gbtn[i2]))
+				self.iFrames.append(itemFramesForum(self.lbl[i2],self.gbtn[i2],self.tag_lbl[i2]))
 
 		self.widget = QWidget(self)
 
@@ -1070,11 +1204,25 @@ class itemTab(QWidget):
 
 			marker = len(self.iFrames)-1
 
+			a = ["assignment","exam","quiz"]
+			for iz in range(marker,len(self.obj.courses[self.id_].items)):
+				if self.obj.courses[self.id_].items[iz].saved==2:
+					pixmap=QPixmap(self.obj.tagDict[3])
+				else:
+					 str_= self.obj.courses[self.id_].items[iz].i_name.lower()
+					 if any(x in str_ for x in a):
+						 pixmap=QPixmap(self.obj.tagDict[4])
+					 else:
+						 pixmap=QPixmap(self.obj.tagDict[self.obj.courses[self.id_].items[iz].type+2])
+				pixmap = pixmap.scaled(45, 45)
+				self.tag_lbl.append(QLabel(self))
+				self.tag_lbl[iz].setPixmap(pixmap)
+
 			for i1 in range(marker,len(self.obj.courses[self.id_].items)):
 				self.lbl.append(ExtendedQLabel(self,i1))
 				cname = self.shortenTabName(self.obj.courses[self.id_].items[i1].i_name)
 				self.lbl[i1].setText(cname)
-				self.lbl[i1].setObjectName("lbl")
+				self.lbl[i1].setObjectName("ilbl")
 				self.sbtn[i1] = QPushButton('Save')
 				self.sbtn[i1].setObjectName("sbtn")
 				self.gbtn.append(QPushButton(QIcon(':/Assets/link.png'),''))
@@ -1085,16 +1233,19 @@ class itemTab(QWidget):
 
 				if self.obj.courses[self.id_].items[i1].saved==1:
 					self.obtn[i1] = QPushButton('Open')
-					self.obtn[i1].setObjectName("obtn")
+					if self.obj.courses[self.id_].items[i1].dwnld == 1:
+						self.obtn[i1].setObjectName("obtn")
+					else:
+						self.obtn[i1].setObjectName("rbtn")
 					self.obtn[i1].clicked.connect(partial(self.openItem,self.gbtn[i1].id_))
 
 			for i2 in range(marker,len(self.obj.courses[self.id_].items)):
 				if self.obj.courses[self.id_].items[i2].saved==1:
-					self.iFrames.append(itemFrames(self.lbl[i2],self.gbtn[i2],self.sbtn[i2],self.obtn[i2]))
+					self.iFrames.append(itemFrames(self.lbl[i2],self.gbtn[i2],self.sbtn[i2],self.obtn[i2],self.tag_lbl[i2]))
 				elif self.obj.courses[self.id_].items[i2].saved==0:
-					self.iFrames.append(itemFramesNew(self.lbl[i2],self.gbtn[i2],self.sbtn[i2]))
+					self.iFrames.append(itemFramesNew(self.lbl[i2],self.gbtn[i2],self.sbtn[i2],self.tag_lbl[i2]))
 				else:
-					self.iFrames.append(itemFramesForum(self.lbl[i2],self.gbtn[i2]))
+					self.iFrames.append(itemFramesForum(self.lbl[i2],self.gbtn[i2],self.tag_lbl[i2]))
 
 			for i3 in range (marker+1,len(self.iFrames)):
 				if i3%2==0:
@@ -1118,7 +1269,7 @@ class itemTab(QWidget):
 			return
 		else:
 			self.obtn[id_] = QPushButton('Open')
-			self.obtn[id_].setObjectName("obtn")
+			self.obtn[id_].setObjectName("rbtn")
 			self.obtn[id_].clicked.connect(partial(self.openItem,self.gbtn[id_].id_))
 			self.obj.courses[self.id_].items[id_].olink = fileName[0]
 			self.obj.courses[self.id_].items[id_].saved=1
@@ -1129,7 +1280,10 @@ class itemTab(QWidget):
 		fileName = self.obj.courses[self.id_].items[id_].olink
 		if sys.platform == "win32":
 			if os.path.exists(fileName):
-				os.startfile(fileName)
+				if self.obj.courses[self.id_].items[id_].type==1 and self.obj.courses[self.id_].items[id_].dwnld==1 :
+					self.parent_.openTextBrowser(fileName,self.obj.courses[self.id_].c_name,self.obj.courses[self.id_].items[id_].i_name)
+				else:
+					os.startfile(fileName)
 			else:
 				reply = QMessageBox.information(self,'Moodly',"This file no longer exists. Kindly save a new link.", QMessageBox.Ok)
 				if reply == QMessageBox.Ok:
@@ -1147,12 +1301,10 @@ class itemTab(QWidget):
 		cb = QApplication.clipboard()
 		cb.clear(mode=cb.Clipboard)
 		cb.setText(self.obj.courses[self.id_].items[id_].glink, mode=cb.Clipboard)
-		pygame.init()
-		pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/message.wav'))
-		pygame.mixer.music.play()
-		reply = QMessageBox.question(self,'Moodly',"The link has been copied", QMessageBox.Ok)
+		reply = QMessageBox.information(self,'Moodly',"The link has been copied", QMessageBox.Ok)
 		if reply == QMessageBox.Ok:
 			pass
+
 
 class ExtendedQLabel(QLabel):
 
@@ -1164,13 +1316,14 @@ class ExtendedQLabel(QLabel):
 
 class itemFrames(QFrame):
 
-	def __init__(self,lbl,btn1,btn2,btn3):
+	def __init__(self,lbl,btn1,btn2,btn3,tag_lbl):
 		super().__init__()
-		self.initUI(lbl,btn1,btn2,btn3)
+		self.initUI(lbl,btn1,btn2,btn3,tag_lbl)
 
-	def initUI(self,lbl,btn1,btn2,btn3):
+	def initUI(self,lbl,btn1,btn2,btn3,tag_lbl):
 		self.grid = QGridLayout()
 		self.grid.addWidget(lbl,1,0)
+		self.grid.addWidget(tag_lbl,1,0)
 		self.grid.addWidget(btn1,1,1)
 		self.grid.addWidget(btn2,1,2)
 		self.grid.addWidget(btn3,1,3)
@@ -1180,13 +1333,14 @@ class itemFrames(QFrame):
 
 class itemFramesForum(QFrame):
 
-	def __init__(self,lbl,btn1):
+	def __init__(self,lbl,btn1,tag_lbl):
 		super().__init__()
-		self.initUI(lbl,btn1)
+		self.initUI(lbl,btn1,tag_lbl)
 
-	def initUI(self,lbl,btn1):
+	def initUI(self,lbl,btn1,tag_lbl):
 		self.grid = QGridLayout()
 		self.grid.addWidget(lbl,1,0)
+		self.grid.addWidget(tag_lbl,1,0)
 		self.grid.addWidget(btn1,1,1)
 		self.grid.setContentsMargins(50,0,40,0)
 		self.grid.setSpacing(0)
@@ -1194,13 +1348,14 @@ class itemFramesForum(QFrame):
 
 class itemFramesNew(QFrame):
 
-	def __init__(self,lbl,btn1,btn2):
+	def __init__(self,lbl,btn1,btn2,tag_lbl):
 		super().__init__()
-		self.initUI(lbl,btn1,btn2)
+		self.initUI(lbl,btn1,btn2,tag_lbl)
 
-	def initUI(self,lbl,btn1,btn2):
+	def initUI(self,lbl,btn1,btn2,tag_lbl):
 		self.grid = QGridLayout()
 		self.grid.addWidget(lbl,1,0)
+		self.grid.addWidget(tag_lbl,1,0)
 		self.grid.addWidget(btn1,1,1)
 		self.grid.addWidget(btn2,1,2)
 		self.grid.setContentsMargins(50,0,40,0)
@@ -1269,9 +1424,6 @@ class SystemTrayIcon(QSystemTrayIcon):
 
 	def timed_notify(self,msg1,msg2,rsn):
 		self.showMessage(msg1, msg2,rsn)
-		pygame.init()
-		pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), 'sounds/notify.wav'))
-		pygame.mixer.music.play()
 
 	def activateIcon(self,reason):
 		if reason == QSystemTrayIcon.DoubleClick:
@@ -1439,7 +1591,9 @@ class itemsWriterThread(QtCore.QThread):
 
 	def run(self):
 		dbconn = Models()
-		dbconn.updateItems((self.fileName,self.obj.courses[self.id1].c_id,self.obj.courses[self.id1].items[self.id2].i_name))
+		t=()
+		t=((1,0,self.fileName,self.obj.courses[self.id1].c_id,self.obj.courses[self.id1].items[self.id2].i_name),)+t
+		dbconn.updateItems(t)
 		dbconn.commit()
 		dbconn.closeConn()
 
@@ -1456,32 +1610,60 @@ class notifySeenThread(QtCore.QThread):
 		dbconn.commit()
 		dbconn.closeConn()
 
+class downloadThread(QtCore.QThread):
+
+	def __init__(self,obj):
+		QtCore.QThread.__init__(self)
+		self.obj=obj
+
+	def run(self):
+
+		t=()
+		for course in self.obj.courses:
+			course.createDirs(self.obj,course.c_name)
+			for item in course.items:
+				if os.path.exists(item.olink)!=True and item.saved!=2:
+					item.saved=0
+				if item.saved==0:
+					if item.type==0:
+						rt = item.downloadItem(self.obj,course.c_name)
+					elif item.type==1:
+						rt = item.downloadForumItem(self.obj,course.c_name)
+					if rt==True:
+						t=((item.saved,item.dwnld,item.olink,course.c_id,item.i_name),)+t
+
+		dbconn = Models()
+		dbconn.updateItems(t)
+		dbconn.commit()
+		dbconn.closeConn()
+
 class configWriterThread(QtCore.QThread):
 
-	def __init__(self,obj,text1,text2,combo1,combo2):
+	def __init__(self,obj,text1,text2,combo1,combo2,text3,path_):
 		QtCore.QThread.__init__(self)
 		self.obj=obj
 		self.text1=text1
 		self.text2=text2
 		self.combo1=combo1
 		self.combo2=combo2
-
+		self.text3=text3
+		self.path_=path_
 
 	def run(self):
 		if self.text2 != self.obj.passwd :
 			cnt = self.obj.reValidate(self.text2)
 
 			if cnt == True:
-				if str(self.combo1) == str(self.obj.nIntval):
-					self.obj.intValChanged = 0
-				elif str(self.combo2) == str(self.obj.upIntval):
+				if str(self.combo1) != str(self.obj.nIntval):
 					self.obj.intValChanged = 1
-				elif str(self.combo2) == str(self.obj.upIntval) and str(self.combo1) == str(self.obj.nIntval) :
+				elif str(self.combo2) != str(self.obj.upIntval) or str(self.text3)!=str(self.obj.dwnld):
+					self.obj.intValChanged = 0
+				elif str(self.combo2) != str(self.obj.upIntval) and str(self.combo1) != str(self.obj.nIntval) :
 					self.obj.intValChanged = 2
 
 
 				self.obj.saveUserData(str(self.text1),
-							  str(self.text2),str(self.combo1),str(self.combo2))
+							  str(self.text2),str(self.combo1),str(self.combo2),str(self.text3),self.path_)
 
 				dbconn = Models()
 				self.obj.alterUserData(dbconn)
@@ -1491,21 +1673,22 @@ class configWriterThread(QtCore.QThread):
 			else:
 				pass
 
-		elif self.text2 == self.obj.passwd and self.combo1 == self.obj.nIntval and self.combo2==self.obj.upIntval:
+		elif self.text2 == self.obj.passwd and self.combo1 == self.obj.nIntval and self.combo2==self.obj.upIntval and self.text3==self.obj.dwnld and self.path_==self.obj.dir_url:
+
 			self.obj.config_status = 'There are no changes to save'
 			self.obj.status_msg[0] = "There are no changes to save"
 			self.obj.status_msg[1] = 2
 
 		else:
-			if str(self.combo1) == str(self.obj.nIntval):
-				self.obj.intValChanged = 0
-			elif str(self.combo2) == str(self.obj.upIntval):
+			if str(self.combo1) != str(self.obj.nIntval):
 				self.obj.intValChanged = 1
-			elif str(self.combo2) == str(self.obj.upIntval) and str(self.combo1) == str(self.obj.nIntval) :
+			elif str(self.combo2) != str(self.obj.upIntval) or str(self.text3)!=str(self.obj.dwnld):
+				self.obj.intValChanged = 0
+			elif str(self.combo2) != str(self.obj.upIntval) and str(self.combo1) != str(self.obj.nIntval) :
 				self.obj.intValChanged = 2
 
 			self.obj.saveUserData(str(self.text1),
-						  str(self.text2),str(self.combo1),str(self.combo2))
+						  str(self.text2),str(self.combo1),str(self.combo2),str(self.text3),self.path_)
 
 			dbconn = Models()
 			self.obj.alterUserData(dbconn)

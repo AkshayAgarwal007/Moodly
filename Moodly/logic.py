@@ -1,10 +1,11 @@
-from .models import *
+from models import *
 from requests import session
 from bs4 import BeautifulSoup
 import re
 from requests.exceptions import ConnectionError
 import datetime
 import sys
+import os
 
 
 class Configure():
@@ -12,11 +13,13 @@ class Configure():
     def __init__(self):
 
         self.configured=0
+        self.dwnld=0
         self.config_status=''
         self.notif=[]
         self.intValChanged =-1
         self.courses = []
         self.error = 0
+        self.dir_url=''
         self.status_msg=[]
         self.scheduled = 0
         self.seen=-4
@@ -64,27 +67,31 @@ class Configure():
         self.passwd=row[2]
         self.nIntval=row[3]
         self.upIntval=row[4]
+        self.dwnld=row[5]
+        self.dir_url=row[6]
 
     def writeConfig(self,ptr):
         ptr.insertConfig((0,self.configured))
 
     def writeUserData(self,ptr):
-        ptr.insertUserData((0,self.uname,self.passwd,self.nIntval,self.upIntval))
+        ptr.insertUserData((0,self.uname,self.passwd,self.nIntval,self.upIntval,self.dwnld,self.dir_url))
 
     def alterConfig(self,ptr):
         ptr.updateConfig((self.configured,self.statux_text,0))
 
     def alterUserData(self,ptr):
-        ptr.updateUserData((self.passwd,self.nIntval,self.upIntval,0))
+        ptr.updateUserData((self.passwd,self.nIntval,self.upIntval,self.dwnld,self.dir_url,0))
 
     def saveConfig(self,configured):
         self.configured=configured
 
-    def saveUserData(self,uname,passwd,nIntval,upIntval ):
+    def saveUserData(self,uname,passwd,nIntval,upIntval,dwnld,path_):
         self.uname=uname
         self.passwd=passwd
         self.nIntval=nIntval
         self.upIntval=upIntval
+        self.dwnld=dwnld
+        self.dir_url = path_
 
     def writeCourses(self,ptr):
         t=()
@@ -129,14 +136,14 @@ class Configure():
         t=()
         for course in self.courses:
             for items in course.dummy_items:
-                t=((items.i_name,items.glink,items.olink,items.saved,items.date,course.c_id),)+t
+                t=((items.i_name,items.glink,items.olink,items.saved,items.date,course.c_id,items.dwnld,items.type),)+t
         ptr.insertItems(t)
 
     def getItems(self,ptr):
         for course in self.courses:
             items = ptr.fetchItems(course.c_id)
             for item in items:
-                course.items.append(Items(item[1],item[2],item[3],item[4],item[5]))
+                course.items.append(Items(item[1],item[2],item[3],item[4],item[5],item[7],item[8]))
 
     def writeForum(self,ptr):
         t=()
@@ -321,10 +328,13 @@ class Course():
         self.items = []
         self.glink=[]
         self.dummy_items = []
+        self.it_count=0
 
     def forumScrapper(self,obj):
      if self.failed == False:
         self.dummy_forum=[]
+        items=[]
+
         payload = {
             'action': 'login',
             'username': obj.uname,
@@ -346,25 +356,40 @@ class Course():
         obj.h=1
         soup=BeautifulSoup(response.text,"lxml")
         for i in soup.findAll('td',attrs={'class':'topic starter'}):
-            if i.text not in self.forum:
-                self.dummy_forum=[i.text]+self.dummy_forum
-                item+=1
+            for r in i.find_all("a"):
+                if i.text not in self.forum:
+                    self.dummy_forum=[i.text]+self.dummy_forum
+                    items.append(Items(i.text,r['href'],'',0,datetime.datetime.now(),0,1))
+                    item+=1
+
 
         if item is not 0 and self.added == False:
             obj.notif.append(Notify('%s Successfully updated'%self.c_name,1,0,obj.scheduled,datetime.datetime.now()))
+            obj.notif.append(Notify('%s items has been added'%str(item),2,0,obj.scheduled,datetime.datetime.now()))
+            obj.d_n+=1
+
+        if self.added==True and item is not 0:
+            obj.notif[-1].notif_text = '%s items has been added'%str(item+self.it_count)
+
 
         for text in self.dummy_forum:
             obj.notif.append(Notify('%s'%text,3,0,obj.scheduled,datetime.datetime.now()))
             obj.d_n+=1
 
-
+        self.dummy_items.extend(items)
         self.forum.extend(self.dummy_forum)
+        self.items.extend(items)
+
+    def createDirs(self,obj,c_name):
+        path_= os.path.join(obj.dir_url, c_name)
+        if not os.path.exists(path_):
+            os.makedirs(path_)
 
     def itemScrapper(self,obj):
-        print ("Scrapping " + self.c_name)
         self.added = False
         self.failed = False
         self.dummy_items = []
+        self.it_count=0
 
         payload = {
         'action' : 'login',
@@ -391,12 +416,12 @@ class Course():
         pos=0
         assign = 0
         noscrap = []
-
         for k in soup.find_all("div",attrs={'class':'activityinstance'}):
             for r in k.find_all("a"):
               if r['href'] not in self.glink:
-                self.dummy_items.append(Items('',r['href'],'',0,datetime.datetime.now()))
+                self.dummy_items.append(Items('',r['href'],'',0,datetime.datetime.now(),0,0))
                 self.glink.append(r['href'])
+
 
                 if "forum/view.php" in r['href'] and self.flink is '':
                     self.flink = r['href']
@@ -409,11 +434,12 @@ class Course():
 
         pos=0
         num=0
+        a = ["assignment","exam","quiz"]
 
         for i in soup.find_all("div",attrs={'class':'activityinstance'}):
             for j in i.find_all("span",attrs={'class':'instancename'}):
               if pos not in noscrap:
-                if 'assignment'in j.text.lower():
+                if any(x in j.text.lower() for x in a):
                     obj.notif.append(Notify('%s'%j.text,4,0,obj.scheduled,datetime.datetime.now()))
                     obj.d_n+=1
                 self.dummy_items[num].addText(j.text)
@@ -426,20 +452,93 @@ class Course():
             obj.notif.append(Notify('%s items has been added'%str(item),2,0,obj.scheduled,datetime.datetime.now()))
             obj.d_n+=1
         self.items.extend(self.dummy_items)
+        self.it_count=item
 
 
 class Items(object):
 
-    def __init__(self,i_name,glink,olink,saved,date):
+    def __init__(self,i_name,glink,olink,saved,date,dwnld,type_):
         self.i_name=i_name
         self.glink=glink
         self.olink=olink
         self.saved=saved
         self.date = date
+        self.dwnld = dwnld
+        self.type = type_
 
     def addText(self,i_name):
+        i_name = re.sub('File', '', i_name)
         self.i_name=i_name
 
+    def downloadForumItem(self,obj,c_name):
+        payload = {
+        'action' : 'login',
+        'username' : obj.uname,
+        'password' : obj.passwd
+          }
+
+        try:
+            with session() as c:
+               c.post('https://moodle.niituniversity.in/moodle/login/index.php/', data=payload,timeout=20)
+               r=c.get(self.glink,timeout=20,stream=True)
+
+        except:
+                return False
+
+        soup=BeautifulSoup(r.text,"lxml")
+        ext='.html'
+        fileName = self.i_name.lstrip().rstrip()+ext
+        c_name = c_name.lstrip().rstrip()
+        path_ = os.path.join(obj.dir_url, c_name)
+        path_ = os.path.join(path_, fileName)
+
+        with open(path_, 'w') as f:
+            for i in soup.find_all(class_='posting fullpost'):
+                for j in i.find_all('p'):
+                    f.write(str(j))
+
+        self.dwnld=1
+        self.saved=1
+        self.olink = path_
+        return True
+
+
+    def downloadItem(self,obj,c_name):
+        payload = {
+        'action' : 'login',
+        'username' : obj.uname,
+        'password' : obj.passwd
+          }
+
+        try:
+            with session() as c:
+               c.post('https://moodle.niituniversity.in/moodle/login/index.php/', data=payload,timeout=20)
+               r=c.get(self.glink,timeout=20,stream=True)
+
+        except:
+             return False
+
+        if r.headers['Content-Type'] == 'application/pdf':
+            ext= '.pdf'
+        elif r.headers['Content-Type'] =='application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+            ext= '.docx'
+        elif r.headers['Content-Type'] =='application/vnd.openxmlformats-officedocument.presentationml.presentation':
+            ext = '.pptx'
+        else:
+            return False
+
+        fileName = self.i_name.lstrip().rstrip() + ext
+        c_name = c_name.lstrip().rstrip()
+        path_ = os.path.join(obj.dir_url, c_name)
+        path_ = os.path.join(path_, fileName)
+        with open(path_, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        self.dwnld=1
+        self.saved=1
+        self.olink = path_
+        return True
 
 class Notify():
 

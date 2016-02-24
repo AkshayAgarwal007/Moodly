@@ -35,7 +35,13 @@ background-color:#fff;
 
 #nlbl {
     font-size: 15px;
-    margin-left:100px;
+    margin-left:80px;
+    font-family:Raleway;
+}
+
+#ilbl {
+    font-size: 15px;
+    margin-left:65px;
     font-family:Raleway;
 }
 
@@ -43,6 +49,7 @@ background-color:#fff;
     font-size: 15px;
     font-family:Raleway;
     color : #33C3F0 ;
+    margin-left:5px;
 }
 
 #clbl {
@@ -185,7 +192,36 @@ background-color:#fff;
 #obtn:hover {
     color: #FFF;
     background-color: #e83146;
-    border-color: #e83146;
+    border-color:#e83146;
+}
+
+#rbtn {
+    height: 38px;
+    padding: 0 30px;
+    color: #555;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 38px;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    color: #FFF;
+    max-height:30px;
+    max-width:30px;
+    background-color:#ff8f66;
+    border-color:#ff8f66;
+    font-family:Raleway;
+    margin-right:10px;
+}
+
+#rbtn:hover {
+    color: #FFF;
+    background-color:#ff6a32;
+    border-color: #ff6a32;
 }
 
 #sbtn {
@@ -305,6 +341,7 @@ min-height:110px;
 max-height:500px;
 min-width:805px;
 }
+
 
 QStatusBar::item {
     border: 0px;

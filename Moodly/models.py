@@ -1,19 +1,21 @@
 import sqlite3
 import os
+import sys
 
 class Models():
 
   def __init__(self):
-     sqlite_file = os.path.join(os.path.dirname(__file__), 'moodly.sqlite')
-     self.conn=sqlite3.connect(sqlite_file,timeout=120)
+     dir_path = os.path.join(os.environ['APPDATA'], 'Moodly')
+     file_path = os.path.join(dir_path, 'moodly.sqlite')
+     self.conn=sqlite3.connect(file_path,timeout=120)
 
 
   def createTables(self):
       c = self.conn.cursor()
       c.execute('''CREATE TABLE CONFIGURE (ID INTEGER PRIMARY KEY AUTOINCREMENT,CONF INTEGER)''')
-      c.execute('''CREATE TABLE USERDATA (ID INTEGER PRIMARY KEY AUTOINCREMENT,USERNAME TEXT, PASSWORD TEXT, NINTVAL TEXT,UPINTVAL TEXT)''')
+      c.execute('''CREATE TABLE USERDATA (ID INTEGER PRIMARY KEY AUTOINCREMENT,USERNAME TEXT, PASSWORD TEXT, NINTVAL TEXT,UPINTVAL TEXT,AUTODWNLD TEXT,URL TEXT)''')
       c.execute('''CREATE TABLE COURSES (NID INTEGER PRIMARY KEY AUTOINCREMENT,NAME TEXT, ID TEXT, FLINK TEXT)''')
-      c.execute('''CREATE TABLE ITEMS (NID INTEGER PRIMARY KEY AUTOINCREMENT,NAME TEXT, GLINK TEXT,OLINK TEXT, SAVED INT, DATE TIMESTAMP,ID TEXT )''')
+      c.execute('''CREATE TABLE ITEMS (NID INTEGER PRIMARY KEY AUTOINCREMENT,NAME TEXT, GLINK TEXT,OLINK TEXT, SAVED INT, DATE TIMESTAMP,ID TEXT,DWNLD INT,TYPE INT)''')
       c.execute('''CREATE TABLE NOTIFY (NID INTEGER PRIMARY KEY AUTOINCREMENT,NOTIF TEXT ,TAG INT,SEEN INT,SCHEDULE TIMESTAMP,DATE TIMESTAMP)''')
       c.execute('''CREATE TABLE FORUM (FORUM TEXT,ID TEXT)''')
       c.execute('''CREATE TABLE DATA(ID INT, LASTSCR TIMESTAMP,NOTIF INT)''')
@@ -39,20 +41,19 @@ class Models():
 
   def insertUserData(self,udata):
       c = self.conn.cursor()
-      c.execute("INSERT INTO USERDATA VALUES(?,?,?,?,?)",(udata))
+      c.execute("INSERT INTO USERDATA VALUES(?,?,?,?,?,?,?)",(udata))
 
 
   def updateUserData(self,udata):
       c = self.conn.cursor()
-      c.execute("UPDATE USERDATA SET PASSWORD=?, NINTVAL=?, UPINTVAL=? WHERE ID=?",(udata))
+      c.execute("UPDATE USERDATA SET PASSWORD=?, NINTVAL=?, UPINTVAL=?,AUTODWNLD=?, URL=? WHERE ID=?",(udata))
 
 
   def fetchUserData(self):
       c = self.conn.cursor()
       c.execute("SELECT * FROM USERDATA")
       rows =c.fetchall()
-      for row in rows:
-        return row
+      return rows[0]
 
 
   def insertCourses(self,courses):
@@ -79,12 +80,12 @@ class Models():
 
   def insertItems(self,items):
       c = self.conn.cursor()
-      c.executemany("INSERT INTO ITEMS(NAME,GLINK,OLINK,SAVED,DATE,ID) VALUES(?,?,?,?,?,?)",(items))
+      c.executemany("INSERT INTO ITEMS(NAME,GLINK,OLINK,SAVED,DATE,ID,DWNLD,TYPE) VALUES(?,?,?,?,?,?,?,?)",(items))
 
 
   def updateItems(self,items):
       c = self.conn.cursor()
-      c.execute("UPDATE ITEMS SET SAVED =1,OLINK=? WHERE ID=? AND NAME=?",(items))
+      c.executemany("UPDATE ITEMS SET SAVED =?,DWNLD=?,OLINK=? WHERE ID=? AND NAME=?",(items))
 
 
   def fetchItems(self,items):
