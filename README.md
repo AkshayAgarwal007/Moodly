@@ -102,8 +102,12 @@ The course item tab would list all the course files. Initially there would be ju
 
 You can make use of the white-colored link button to copy the Moodle URL of a file to your clipboard. This may assist you to download files from Moodle in case you are doing it manually.
 
+Clicking on the open button of an item which has been listed as a forum update, an inbuilt text browser tab will open up showing the contents of that particular forum update.
+
 
 ![Item Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/item_tab.png "Item Tab")
+
+![Forum Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/forum_tab.png "Item Tab")
 
 ##Notifications
 
