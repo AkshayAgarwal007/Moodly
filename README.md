@@ -3,18 +3,18 @@
 
 ## What is Moodly?
 
-Moodly is a student intimation system for [Moodle](https://moodle.org/) (NIIT University). It is a desktop app which keeps you updated with notifications of files uploaded or any forum updates (of the courses you are registered in) on [NU-Moodle](https://moodle.niituniversity.in/moodle/). In addition to that it also helps you download and manage your Moodle course files. 
+Moodly is a student intimation system for [Moodle](https://moodle.org/) (NIIT University). It is a desktop app which keeps you updated with notifications of files uploaded or any forum updates (of the courses you are registered in) on [NU-Moodle](https://moodle.niituniversity.in/moodle/). In addition to that it also helps you download and manage your Moodle course files.
 
 Moodly is written in Python. It uses PyQt5, a set of Python bindings for the Qt5 Application framework for its GUI, Requests for sending HTTP requests and BeautifulSoup for HTML parsing.
 
-This does not make use of any Moodle API because it was intended to be a Web Scrapping Project. 
+This does not make use of any Moodle API because it was intended to be a Web Scrapping Project.
 
 ##Installation
 
 ###Windows
 
 1. Download the [.7z file] (https://www.dropbox.com/s/px4mi7usczio9lp/Moodly.7z?dl=0) and extract it.
-  
+
 2. Copy the extracted Moodly.exe to your preferable location. And that's it.
 
 **To launch the application on startup**
@@ -23,11 +23,13 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
 
 2. From the start menu open the run command box and type `shell:startup` and click on Ok.
 
-3. Copy the shortcut to this location (i.e the startup directory). And you are done. Now reboot and Moodly should launch on startup. 
+3. Copy the shortcut to this location (i.e the startup directory). And you are done. Now reboot and Moodly should launch on startup.
+
+In case you want a version for a 32 bit system you need to be [mailing me](mailto:agarwal.akshay.akshay8@gmail.com).
 
 ###Linux
 
-1. Download the [tar file](https://www.dropbox.com/s/iv082uae4e4zr41/Moodly-1.0-Alpha-Linux.tar.gz?dl=0) and extract it.
+1. Download the tar file  and extract it (currently not available).
 
 2. Copy the extracted Moodly executable to your preferable location. And Thats it!
 
@@ -50,7 +52,7 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
    cp /path/to/Moodly.desktop ~/.config/autostart/
    ```
 
-5. And you are done. Now reboot and Moodly should launch on startup. 
+5. And you are done. Now reboot and Moodly should launch on startup.
 
 **Note:**
 
@@ -72,38 +74,36 @@ If you have been able to successfully install Moodly, this should be very easy f
 
 ##Configuration
 
-The first thing you need to do after installing Moodly is configure it up. You need to fill in your **Moodle Username** and **Password**. **Update interval** is the time interval in which you want Moodly to fetch data from the university Moodle servers. **Keep Notifying** is the time interval in which you would be notified by Moodly about any unread notifications if any. This feature is turned off by default. 
+The first thing you need to do after installing Moodly is configure it up. You need to fill in your **Moodle Username** and **Password**. **Update interval** is the time interval in which you want Moodly to fetch data from the university Moodle servers. **Keep Notifying** is the time interval in which you would be notified by Moodly about any unread notifications if any. This feature is turned off by default. You would also have to enable the **Auto-Download** feature by clicking on the checkbox in case you want Moodly to download the course files automatically for you. You will also be prompted to enter a directory name where you want Moodly to store the downloaded course files.
 
 You can make changes to your configuration in the future. However, once your credentials (username and password) get verified you won’t be able to change your username. To do this you can reset the app by deleting the **moodly.sqlite** file.
 
 
-![Moodly Configure](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/config_linux.png "Initial Configuration")
+![Moodly Configure](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/config.png "Initial Configuration")
 
-![Moodly Configure](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/config_tab_linux.png "Changing Configurations")
+![Moodly Configure](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/config_tab.png "Changing Configurations")
 
 ##Setup
 
 This would follow the initial configuration and would take time depending upon the number of courses you are registered in and the number of files and forum news each course contain. You are required to wait patiently during the setup phase.
 
 
-![Setup](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/setup_linux.png "Setup")
+![Setup](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/setup.png "Setup")
 
 ##Courses
 The course tab lists all the courses that you are registered in and clicking on the **FILES** button would open the corresponding course item tab.
 
 
-![Course Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/course_tab_linux.png "Course Tab")
+![Course Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/course_tab.png "Course Tab")
 
 ##Course Files
 
-The course item tab would list all the course files. Initially there would be just a save button inside each item frame. After you save that particular file by selecting it from your local system, an open button would also accompany the initial save button and from the next time you can use that to open that particular file.
+The course item tab would list all the course files. Initially there would be just a save button inside each item frame. After you save that particular file by selecting it from your local system, an open button would also accompany the initial save button and from the next time you can use that to open that particular file. If you have enabled the Auto-Download feature then the files would get automatically downloaded. A red coloured open button denotes an automatically downloaded file whereas an orange coloured open button denotes a manually downloaded file.
 
-You can make use of the white-colored link button to copy the Moodle URL of a file to your clipboard. This may assist you to download files from Moodle.
-
-This might be little tedious but thankfully the next feature update Moodly will see is Automatic File Download.
+You can make use of the white-colored link button to copy the Moodle URL of a file to your clipboard. This may assist you to download files from Moodle in case you are doing it manually.
 
 
-![Item Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/item_tab_linux.png "Item Tab")
+![Item Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/item_tab.png "Item Tab")
 
 ##Notifications
 
@@ -112,7 +112,7 @@ The notification tab would contain all the update notifications.
 
 ![Notifications Tab](https://github.com/AkshayAgarwal007/Moodly/blob/master/img/notify_tab.png "Notifications Tab")
 
-##Shortcuts 
+##Shortcuts
 
 * **Ctrl+Shift+C** - Configure
 
@@ -120,14 +120,7 @@ The notification tab would contain all the update notifications.
 
 * **Ctrl+Q** – Quit Moddly
 
-Clicking the close button will minimize Moodly to the System Tray. You can either press Ctrl+Q or right click on the System Tray icon and click on Exit to close the app and remove it from the tray. 
-
-##Upcoming Features
-
-* Automatic File Download
-* MOOCs recommendation System
-* Gate pass request status and submission system
-* Task Scheduler
+Clicking the close button will minimize Moodly to the System Tray. You can either press Ctrl+Q or right click on the System Tray icon and click on Exit to close the app and remove it from the tray.
 
 ##Developers
 
@@ -135,11 +128,11 @@ Though this application is specifically made for NU-Moodle, the code can be modi
 
 Since this app targets a higly specific group of people there might not be many developers visiting this repo. Though there are many aspects of this application like (Web Scrapping, Making GUI apps using Python, Packaging a Python app,multithreading. writing non-blocking code, working with libraries like sqlite3, requests and BeautifulSoup) which is of importance to any Python developer and I would like to explain those things to you (You must be interested if you are reading this). But instead of doing that here I would prefer to write a blog on this topic and I would add the link to the same here as soon as I do so.
 
-##Contributing 
+##Contributing
 
 * Found a bug? Report it on GitHub [Issues](https://github.com/AkshayAgarwal007/Moodly/issues) and include a code sample.
-* [Fork](https://github.com/AkshayAgarwal007/Moodly/issues#fork-destination-box) the repository and work on a feature update. 
-* Users can also contribute by reporting a bug by simply [mailing me](mailto:agarwal.akshay.akshay8@gmail.com). 
+* [Fork](https://github.com/AkshayAgarwal007/Moodly/issues#fork-destination-box) the repository and work on a feature update.
+* Users can also contribute by reporting a bug by simply [mailing me](mailto:agarwal.akshay.akshay8@gmail.com).
 
 ___
 
