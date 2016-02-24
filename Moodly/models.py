@@ -5,9 +5,9 @@ import sys
 class Models():
 
   def __init__(self):
-     dir_path = os.path.join(os.environ['APPDATA'], 'Moodly')
-     file_path = os.path.join(dir_path, 'moodly.sqlite')
-     self.conn=sqlite3.connect(file_path,timeout=120)
+     sqlite_file = os.path.join(os.path.dirname(__file__), 'moodly.sqlite')
+     self.conn=sqlite3.connect(sqlite_file,timeout=120)
+
 
 
   def createTables(self):
