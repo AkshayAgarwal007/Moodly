@@ -13,7 +13,7 @@ This does not make use of any Moodle API because it was intended to be a Web Scr
 
 ###Windows
 
-1. Download the [.7z file] (https://www.dropbox.com/s/82azizowi98kdpc/Moodly%201.0%20Beta%2864-bit%29.7z?dl=0) and extract it.
+1. Download the [Zip File] (https://www.dropbox.com/s/5n608bgd2zmq358/Moodly%201.0%20Beta%2864-bit%29.zip?dl=0) and extract it.
 
 2. Copy the extracted Moodly.exe to your preferable location. And that's it.
 
