@@ -1,6 +1,7 @@
 from .models import *
 from requests import session
 from bs4 import BeautifulSoup
+from random import randint
 import re
 from requests.exceptions import ConnectionError
 import datetime
@@ -486,21 +487,47 @@ class Items(object):
                 return False
 
         soup=BeautifulSoup(r.text,"lxml")
-        ext='.html'
-        fileName = self.i_name.lstrip().rstrip()+ext
-        c_name = c_name.lstrip().rstrip()
-        path_ = os.path.join(obj.dir_url, c_name)
-        path_ = os.path.join(path_, fileName)
-
-        with open(path_, 'w') as f:
-            for i in soup.find_all(class_='posting fullpost'):
-                for j in i.find_all('p'):
-                    f.write(str(j))
+        
+        try:
+            c_name = c_name.lstrip().rstrip()
+            fileName = self.generateFileName(0)
+            path_ = os.path.join(obj.dir_url, c_name)
+            path_ = os.path.join(path_, fileName)
+        
+            with open(path_, 'w') as f:
+                for i in soup.find_all(class_='posting fullpost'):
+                    for j in i.find_all('p'):
+                        f.write(str(j))
+                        
+            
+        except:
+            c_name = c_name.lstrip().rstrip()
+            fileName = self.generateFileName(1)
+            path_ = os.path.join(obj.dir_url, c_name)
+            path_ = os.path.join(path_, fileName)
+        
+            with open(path_, 'w') as f:
+                for i in soup.find_all(class_='posting fullpost'):
+                    for j in i.find_all('p'):
+                        f.write(str(j))
+    
 
         self.dwnld=1
         self.saved=1
         self.olink = path_
         return True
+        
+    def generateFileName(self,val):
+        ext='.html'
+        fileName = self.i_name.lstrip().rstrip()
+        if val==0:
+            tmp = fileName.split(',', 1)[0]
+        else:
+            tmp = fileName.split(' ', 1)[0] + str(randint(0,9))
+        
+        
+        fileName=tmp+ext
+        return fileName
 
 
     def downloadItem(self,obj,c_name):
@@ -531,6 +558,8 @@ class Items(object):
         c_name = c_name.lstrip().rstrip()
         path_ = os.path.join(obj.dir_url, c_name)
         path_ = os.path.join(path_, fileName)
+        
+        
         with open(path_, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
