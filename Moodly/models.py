@@ -35,8 +35,7 @@ class Models():
       c = self.conn.cursor()
       c.execute("SELECT * FROM CONFIGURE")
       rows =c.fetchall()
-      for row in rows:
-        return row
+      return rows[0]
 
 
   def insertUserData(self,udata):
